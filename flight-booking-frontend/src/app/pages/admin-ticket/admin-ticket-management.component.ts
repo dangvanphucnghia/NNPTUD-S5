@@ -8,31 +8,31 @@ interface Ticket {
   _id: string;
   flightId?: {
     _id: string;
-    flightNumber: string;
-    airline: {
+    flightNumber?: string;
+    airline?: {
       name: string;
       code: string;
     };
-    departure: {
+    departure?: {
       city: string;
       airport: string;
       time: string;
     };
-    arrival: {
+    arrival?: {
       city: string;
       airport: string;
       time: string;
     };
   };
-  userId: {
+  userId?: {
     _id: string;
     username: string;
     email: string;
   };
-  seatNumber: string;
-  fullName: string;
-  email: string;
-  phone: string;
+  seatNumber?: string;
+  fullName?: string;
+  email?: string;
+  phone?: string;
   status: string;
   createdAt: string;
   updatedAt: string;
