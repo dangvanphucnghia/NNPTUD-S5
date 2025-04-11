@@ -10,24 +10,24 @@ interface Ticket {
     _id: string;
     flightNumber?: string;
     airline?: {
-      name: string;
-      code: string;
+      name?: string;
+      code?: string;
     };
     departure?: {
-      city: string;
-      airport: string;
-      time: string;
+      city?: string;
+      airport?: string;
+      time?: string;
     };
     arrival?: {
-      city: string;
-      airport: string;
-      time: string;
+      city?: string;
+      airport?: string;
+      time?: string;
     };
   };
   userId?: {
     _id: string;
-    username: string;
-    email: string;
+    username?: string;
+    email?: string;
   };
   seatNumber?: string;
   fullName?: string;

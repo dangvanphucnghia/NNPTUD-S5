@@ -72,7 +72,7 @@
             <tbody>
               <tr *ngFor="let ticket of filteredTickets">
                 <td>
-                  <div class="font-medium">{{ ticket.flightId.flightNumber|| 'Chưa có' }}</div>
+                  <div class="font-medium">{{ ticket.flightId?.flightNumber|| 'Chưa có' }}</div>
                   <div class="text-muted">Ghế {{ ticket.seatNumber }}</div>
                 </td>
                 <td>
