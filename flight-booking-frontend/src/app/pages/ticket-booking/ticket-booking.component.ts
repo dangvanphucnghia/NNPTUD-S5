@@ -16,7 +16,7 @@ import { PromotionService, Promotion } from '../../services/promotion.service';
   imports: [CommonModule, RouterModule, ReactiveFormsModule, FormsModule, DatePipe, CurrencyPipe],
   providers: [HttpClient],
   templateUrl: './ticket-booking.component.html',
-  styleUrls: ['./ticket-booking.component.css']
+  styleUrls: ['./ticket-booking.component.scss']
 })
 export class TicketBookingComponent implements OnInit, AfterViewInit {
   flightId: string | null = null;

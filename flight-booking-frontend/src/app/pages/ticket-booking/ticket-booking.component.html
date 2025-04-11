@@ -2,7 +2,7 @@
   <div class="container">
     <div class="booking-header">
       <h1>Đặt vé máy bay</h1>
-      <a routerLink="/flights" class="btn-back">
+      <a routerLink="/home" class="btn-back">
         <i class="fa-solid fa-arrow-left"></i> Quay lại tìm kiếm
       </a>
     </div>
@@ -124,7 +124,7 @@
                     <div class="form-group">
                       <label for="fullName{{i}}">Họ và tên <span class="required">*</span></label>
                       <input type="text" id="fullName{{i}}" formControlName="fullName" placeholder="Nhập họ tên đầy đủ"
-                        class="form-control">
+                        class="form-control" [ngClass]="{'invalid': passenger.get('fullName')?.invalid && passenger.get('fullName')?.touched}">
                       <div *ngIf="passenger.get('fullName')?.invalid && passenger.get('fullName')?.touched"
                         class="error-message">
                         Vui lòng nhập họ tên
@@ -134,7 +134,7 @@
                     <div class="form-group">
                       <label for="email{{i}}">Email <span class="required">*</span></label>
                       <input type="email" id="email{{i}}" formControlName="email" placeholder="email@example.com"
-                        class="form-control">
+                        class="form-control" [ngClass]="{'invalid': passenger.get('email')?.invalid && passenger.get('email')?.touched}">
                       <div *ngIf="passenger.get('email')?.invalid && passenger.get('email')?.touched"
                         class="error-message">
                         Vui lòng nhập email hợp lệ
@@ -146,7 +146,7 @@
                     <div class="form-group">
                       <label for="phone{{i}}">Số điện thoại <span class="required">*</span></label>
                       <input type="tel" id="phone{{i}}" formControlName="phone" placeholder="0xxxxxxxxx"
-                        class="form-control">
+                        class="form-control" [ngClass]="{'invalid': passenger.get('phone')?.invalid && passenger.get('phone')?.touched}">
                       <div *ngIf="passenger.get('phone')?.invalid && passenger.get('phone')?.touched"
                         class="error-message">
                         Vui lòng nhập số điện thoại hợp lệ (10 số)
@@ -156,7 +156,8 @@
                     <div class="form-group">
                       <label for="seat{{i}}">Chọn ghế <span class="required">*</span></label>
                       <div class="seat-selection">
-                        <select id="seat{{i}}" formControlName="seatNumber" class="form-control">
+                        <select id="seat{{i}}" formControlName="seatNumber" class="form-control" 
+                          [ngClass]="{'invalid': passenger.get('seatNumber')?.invalid && passenger.get('seatNumber')?.touched}">
                           <option value="">-- Chọn ghế --</option>
                           <option *ngFor="let seat of availableSeats" [value]="seat"
                             [class.seat-taken]="isSeatTaken(seat)">
@@ -259,9 +260,7 @@
               <div class="total-value">{{ totalAmount | currency:'VND':'symbol':'1.0-0' }}</div>
             </div>
 
-            <!-- Thay đổi: Gọi phương thức xacNhanDatVe thay vì submitBooking -->
-            <!-- Thay đổi nút xác nhận đặt vé -->
-            <button type="button" (click)="xacNhanDatVe()" class="btn-book-now" [disabled]="isSubmitting"
+            <button type="button" (click)="xacNhanDatVe()" class="btn-book-now" [disabled]="isSubmitting || !isFormValid()"
               id="submitButton">
               <span *ngIf="!isSubmitting">Xác nhận đặt vé</span>
               <span *ngIf="isSubmitting">
@@ -302,7 +301,7 @@
       <div class="seat-map-body">
         <div class="plane-layout">
           <div class="cockpit"></div>
-          <div class="exit exit-front"></div>
+          <div class="exit exit-front">CỬA THOÁT HIỂM</div>
 
           <div class="seat-grid">
             <div class="seat-row seat-row-header">
@@ -310,7 +309,7 @@
               <div class="seat-label">A</div>
               <div class="seat-label">B</div>
               <div class="seat-label">C</div>
-              <div class="aisle">AISLE</div>
+              <div class="aisle">LỐI ĐI</div>
               <div class="seat-label">D</div>
               <div class="seat-label">E</div>
               <div class="seat-label">F</div>
@@ -318,18 +317,25 @@
 
             <div class="seat-row" *ngFor="let row of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]">
               <div class="row-number">{{ row }}</div>
-              <div class="seat" *ngFor="let letter of ['A', 'B', 'C', 'D', 'E', 'F']"
-                [class.occupied]="!isAvailableSeat(row + letter)" [class.selected]="isSelectedSeat(row + letter)"
+              <div *ngFor="let letter of ['A', 'B', 'C']" class="seat"
+                [class.occupied]="!isAvailableSeat(row + letter)" 
+                [class.selected]="isSelectedSeat(row + letter)"
                 (click)="selectSeat(row + letter)">
                 {{ letter }}
               </div>
-              <div class="aisle" *ngIf="row % 3 === 0">
-                <i class="fa-solid fa-arrow-right"></i>
+              <div class="aisle">
+                <i *ngIf="row % 3 === 0" class="fa-solid fa-arrow-right"></i>
+              </div>
+              <div *ngFor="let letter of ['D', 'E', 'F']" class="seat"
+                [class.occupied]="!isAvailableSeat(row + letter)" 
+                [class.selected]="isSelectedSeat(row + letter)"
+                (click)="selectSeat(row + letter)">
+                {{ letter }}
               </div>
             </div>
           </div>
 
-          <div class="exit exit-back"></div>
+          <div class="exit exit-back">CỬA THOÁT HIỂM</div>
         </div>
 
         <div class="seat-legend">
