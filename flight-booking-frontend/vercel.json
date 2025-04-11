@@ -1,6 +1,12 @@
 {
-    "rewrites": [
-      { "source": "/(.*)", "destination": "/" }
+    "builds": [
+      {
+        "src": "flight-booking-frontend/angular.json",
+        "use": "@vercel/angular"
+      }
+    ],
+    "routes": [
+      { "src": "/(.*)", "dest": "/index.html" }
     ]
   }
   
