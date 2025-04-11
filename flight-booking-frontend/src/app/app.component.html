@@ -1,0 +1,16 @@
+<router-outlet></router-outlet>
+<div class="container">
+    <h2>Đăng nhập</h2>
+    <form (ngSubmit)="onLogin()">
+      <div class="mb-3">
+        <label>Email:</label>
+        <input type="email" [(ngModel)]="user.email" name="email" class="form-control" required />
+      </div>
+      <div class="mb-3">
+        <label>Password:</label>
+        <input type="password" [(ngModel)]="user.password" name="password" class="form-control" required />
+      </div>
+      <button type="submit" class="btn btn-primary">Đăng nhập</button>
+    </form>
+  </div>
+  

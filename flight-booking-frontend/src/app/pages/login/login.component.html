@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng nhập - SkyJourney Airlines</title>
+
+</head>
+
+<body>
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+  <div class="login-container">
+    <div class="login-image">
+      <div class="image-overlay">
+        <h2>SkyJourney Airlines</h2>
+        <p>Khám phá thế giới với những chuyến bay tuyệt vời</p>
+
+        <div style="margin-top: 30px;">
+          <img src="https://cdn-icons-png.flaticon.com/512/984/984233.png" alt="Airplane Icon"
+            style="width: 120px; height: auto; opacity: 0.9; margin-bottom: 20px;">
+        </div>
+
+        <div style="margin-top: 20px;">
+          <img
+            src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=300&q=80"
+            alt="Travel Destinations"
+            style="width: 200px; height: auto; opacity: 0.8; border-radius: 10px; margin-bottom: 20px;">
+        </div>
+      </div>
+    </div>
+
+    <div class="login-form">
+      <div class="login-logo">
+        <img src="https://cdn-icons-png.flaticon.com/512/984/984153.png" alt="SkyJourney Airlines Logo"
+          style="height: 60px; width: auto;">
+      </div>
+
+      <h1>Đăng nhập</h1>
+
+      <!-- ✅ Sửa: Chỉ dùng (ngSubmit) trong form -->
+      <form (ngSubmit)="onLogin()" #loginForm="ngForm">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" class="form-control" id="email" placeholder="Nhập email của bạn" [(ngModel)]="user.email"
+            name="email" required>
+          <i class="far fa-envelope"></i>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Mật khẩu</label>
+          <input type="password" class="form-control" id="password" placeholder="Nhập mật khẩu của bạn"
+            [(ngModel)]="user.password" name="password" required #passwordInput>
+          <i class="far fa-eye" (click)="togglePasswordVisibility(passwordInput)" style="cursor: pointer;"></i>
+        </div>
+
+        <!-- ✅ Hiển thị lỗi nếu đăng nhập thất bại -->
+        <div *ngIf="errorMessage" class="error-message">
+          {{ errorMessage }}
+        </div>
+
+        <div class="forgot-password">
+          <a href="#">Quên mật khẩu?</a>
+        </div>
+
+        <!-- ✅ Sửa: Chỉ giữ lại type="submit" -->
+        <button type="submit" class="btn-login" [disabled]="loginForm.invalid">ĐĂNG NHẬP</button>
+
+        <div class="social-login">
+          <div class="social-btn">
+            <img src="https://cdn-icons-png.flaticon.com/512/300/300221.png" alt="Google logo"
+              style="width: 24px; height: 24px;">
+            Google
+          </div>
+          <div class="social-btn">
+            <img src="https://cdn-icons-png.flaticon.com/512/5968/5968764.png" alt="Facebook logo"
+              style="width: 24px; height: 24px;">
+            Facebook
+          </div>
+        </div>
+
+        <div style="margin-top: 20px; text-align: center;">
+          <img
+            src="https://images.unsplash.com/photo-1576153192621-7a3be10b356e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80"
+            alt="Travel destinations banner"
+            style="max-width: 100%; height: 60px; border-radius: 8px; opacity: 0.8; object-fit: cover;">
+        </div>
+
+        <div class="register-link">
+          Bạn chưa có tài khoản? <a [routerLink]="['/register']">Đăng ký ngay</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+
+</html>

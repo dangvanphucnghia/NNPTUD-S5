@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <title>{{ 'SKYJOURNEY_AIRLINES_SẢI_CÁNH_VƯƠN_CAO' | transloco }}</title>
+</head>
+
+<body>
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="container">
+      <div class="top-bar-content">
+        <a href="/">
+          <img src="https://cdn-icons-png.flaticon.com/512/984/984153.png" alt="SkyJourney Airlines Logo" class="logo">
+        </a>
+        <div class="top-links">
+          <a href="#">{{ 'TRỢ_GIÚP' | transloco }}</a>
+          <div class="top-links">
+            <ng-container *ngIf="!user; else loggedIn">
+              <a routerLink="/login" class="btn-login">{{ 'ĐĂNG_NHẬP' | transloco }}</a>
+              <a routerLink="/register" class="btn-register">{{ 'ĐĂNG_KÝ' | transloco }}</a>
+            </ng-container>
+
+            <ng-template #loggedIn>
+              <span class="user-welcome" (click)="goToProfile()" style="cursor: pointer">
+                <span class="user-welcome"> {{ 'WELCOME' | transloco }}, {{ slugifiedUsername }}</span>
+              </span>
+              <button class="btn-logout" (click)="logout()">{{ 'ĐĂNG_XUẤT' | transloco }}</button>
+            </ng-template>
+          </div>
+          <div class="language-selector">
+            <a href="#" (click)="switchLang()">
+              <img
+                [src]="'assets/img/' + (currentLang === 'en' ? 'en.svg' : 'vn.svg')"
+                alt="Flag"
+                width="20"
+                height="14"
+                style="vertical-align: middle; margin-right: 5px;"
+              />
+              {{ currentLang === 'en' ? 'English' : 'Tiếng Việt' }}
+            </a>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Navigation -->
+  <nav class="main-nav">
+    <div class="container">
+      <ul class="nav-items">
+        <li><a href="#">{{ 'LÊN_KẾ_HOẠCH' | transloco }}</a></li>
+        <li><a href="#">{{ 'THÔNG_TIN_HÀNH_TRÌNH' | transloco }}</a></li>
+        <li><a href="#">{{ 'MUA_VÉ_SẢN_PHẨM_KHÁC' | transloco }}</a></li>
+        <li><a href="#">{{ 'LOTUSMILES' | transloco }}</a></li>
+              </ul>
+    </div>
+  </nav>
+
+  <!-- Hero Banner -->
+  <div class="hero-banner">
+    <div class="hero-slide">
+      <div class="hero-content">
+        <img
+          src="https://images.unsplash.com/photo-1483450388369-9ed95738483c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+          alt="Malaysia Skyline" class="promo-image-left">
+
+        <div class="promo-card">
+          <h2 class="promo-heading">{{ 'BAY_ÊM_GIÁ_ÊM' | transloco }}</h2>
+          <p class="promo-text">{{ 'NHẬP_MÃ_KUALALV' | transloco }}</p>
+          <h3 class="promo-text">{{ '10' | transloco }}</h3>
+          <p class="promo-text">{{ 'KUALA_LUMPUR_TP_HỒ_CHÍ_MINH' | transloco }}</p>
+          <a class="promo-cta" href="#">{{ 'ĐẶT_VÉ_NGAY' | transloco }}</a>
+        </div>
+
+        <img
+          src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1171&q=80"
+          alt="City Skyline" class="promo-image-right">
+      </div>
+    </div>
+
+    <!-- Slider dots -->
+    <div class="slider-dots">
+      <div class="dot active"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+  </div>
+
+  <!-- Search Box -->
+  <div class="container">
+    <div class="search-box">
+      <div class="tab-links">
+        <div class="tab-link active">{{ 'MUA_VÉ' | transloco }}</div>
+        <div class="tab-link">{{ 'QUẢN_LÝ_ĐẶT_CHỖ' | transloco }}</div>
+        <div class="tab-link">{{ 'LÀM_THỦ_TỤC' | transloco }}</div>
+      </div>
+
+      <form class="search-form" [formGroup]="searchForm" (ngSubmit)="onSearch()">
+        <!-- Thay đổi phần điểm đi trong form -->
+        <div class="form-group">
+          <label for="departure">{{ 'TỪ' | transloco }}</label>
+          <div class="dropdown-container departure-dropdown-container">
+            <input type="text" id="departure" class="form-control" placeholder="Tp. Hồ Chí Minh (SGN), Việt Nam"
+              formControlName="departure" autocomplete="off" (focus)="onFocusDeparture()">
+
+            <div class="dropdown-list" *ngIf="showDepartureDropdown && filteredDepartureLocations.length > 0">
+              <div class="dropdown-item" *ngFor="let location of filteredDepartureLocations"
+                (click)="selectDepartureLocation(location)">
+                {{ location }}
+              </div>
+            </div>
+          </div>
+          <div *ngIf="searchForm.get('departure')?.invalid && searchForm.get('departure')?.touched"
+            class="error-message">
+            Vui lòng chọn điểm khởi hành
+          </div>
+        </div>
+
+        <!-- Thay đổi phần điểm đến trong form -->
+        <div class="form-group">
+          <label for="destination">{{ 'ĐẾN' | transloco }}</label>
+          <div class="dropdown-container destination-dropdown-container">
+            <input type="text" id="destination" class="form-control" placeholder="Chọn điểm đến"
+              formControlName="destination" autocomplete="off" (focus)="onFocusDestination()">
+
+            <div class="dropdown-list" *ngIf="showDestinationDropdown && filteredDestinationLocations.length > 0">
+              <div class="dropdown-item" *ngFor="let location of filteredDestinationLocations"
+                (click)="selectDestinationLocation(location)">
+                {{ location }}
+              </div>
+            </div>
+          </div>
+          <div *ngIf="searchForm.get('destination')?.invalid && searchForm.get('destination')?.touched"
+            class="error-message">
+            Vui lòng chọn điểm đến
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="departureDate">{{ 'NGÀY_ĐI' | transloco }}</label>
+          <input type="date" id="departureDate" class="form-control" formControlName="departureDate">
+        </div>
+
+        <div class="form-group">
+          <label for="returnDate">{{ 'NGÀY_VỀ' | transloco }}</label>
+          <input type="date" id="returnDate" class="form-control" formControlName="returnDate">
+        </div>
+
+        <button class="btn-search" type="submit">{{ 'TÌM_CHUYẾN_BAY' | transloco }}</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Flights List Section -->
+  <section class="flights-list">
+    <div class="container">
+      <h2 class="section-title">Các chuyến bay sắp khởi hành</h2>
+
+      <!-- Loading indicator -->
+      <div class="loading-indicator" *ngIf="isLoading">
+        <div class="spinner"></div>
+        <p>Đang tải danh sách chuyến bay...</p>
+      </div>
+
+      <!-- Vietnam Airlines style flight cards -->
+      <div class="flight-cards" *ngIf="!isLoading && displayedFlights.length > 0">
+        <div class="flight-card" *ngFor="let flight of displayedFlights">
+          <div class="flight-card-header">
+            <div class="airline-info">
+              <img *ngIf="flight.airline?.logo" [src]="flight.airline.logo" [alt]="flight.airline.name"
+                class="airline-logo">
+              <div class="airline-details">
+                <div class="flight-number">{{ flight.flightNumber }}</div>
+                <div class="airline-name">{{ flight.airline?.name || 'Vietnam Airlines' }}</div>
+              </div>
+            </div>
+            <div class="flight-status" [ngClass]="getStatusClass(flight.status)">
+              {{ getStatusText(flight.status) }}
+            </div>
+          </div>
+
+          <div class="flight-card-body">
+            <div class="flight-route">
+              <div class="departure">
+                <div class="time">{{ formatDisplayTime(flight.departure.time) }}</div>
+                <div class="code">{{ getAirportCode(flight.departure.airport) }}</div>
+                <div class="airport">{{ flight.departure.airport.replace('Sân bay', '').trim() }}</div>
+              </div>
+
+              <div class="flight-divider">
+                <div class="duration">{{ getFlightDuration(flight) }}</div>
+                <div class="line"></div>
+                <div class="airplane-icon">
+                  <i class="fa-solid fa-plane"></i>
+                </div>
+              </div>
+
+              <div class="arrival">
+                <div class="time">{{ formatDisplayTime(flight.arrival.time) }}</div>
+                <div class="code">{{ getAirportCode(flight.arrival.airport) }}</div>
+                <div class="airport">{{ flight.arrival.airport.replace('Sân bay', '').trim() }}</div>
+              </div>
+            </div>
+
+            <div class="flight-details">
+              <div class="flight-info-item">
+                <div class="info-label">Ngày bay</div>
+                <div class="info-value">{{ formatDisplayDate(flight.departure.time) }}</div>
+              </div>
+              <div class="flight-info-item">
+                <div class="info-label">Ghế trống</div>
+                <div class="info-value">{{ flight.seatsAvailable }}</div>
+              </div>
+              <div class="flight-info-item price">
+                <div class="info-label">Giá vé</div>
+                <div class="flight-price" [class.has-promotion]="hasPromotion(flight)">
+                  <div *ngIf="hasPromotion(flight)" class="original-price">
+                    {{ formatPrice(flight.price) }}
+                  </div>
+                  <div *ngIf="hasPromotion(flight)" class="discounted-price">
+                    {{ formatPrice(getDiscountedPrice(flight)) }}
+                  </div>
+                  <div *ngIf="!hasPromotion(flight)" class="regular-price">
+                    {{ formatPrice(flight.price) }}
+                  </div>
+                  <div *ngIf="hasPromotion(flight)" class="promotion-badges">
+                    <span *ngFor="let promotion of getPromotionsForFlight(flight)" class="badge badge-promotion">
+                      {{ promotion.code }} - Giảm {{ promotion.discountValue }}{{ promotion.discountType === 'PERCENTAGE' ? '%' : ' VND' }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="button-group">
+                <button class="btn-details" (click)="viewFlightDetails(flight._id)">Chi tiết</button>
+                <button *ngIf="flight.seatsAvailable > 0" [routerLink]="['/flights', flight._id, 'book']"
+                  class="btn-book-now">Đặt vé ngay</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination" *ngIf="totalPages > 1">
+          <button class="pagination-button" [disabled]="currentPage === 1" (click)="previousPage()">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <div class="page-numbers">
+            <button *ngFor="let page of getPageNumbers()" class="page-number" [class.active]="page === currentPage"
+              (click)="goToPage(page)">
+              {{ page }}
+            </button>
+          </div>
+          <button class="pagination-button" [disabled]="currentPage === totalPages" (click)="nextPage()">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- No flights message -->
+      <div class="no-flights" *ngIf="!isLoading && displayedFlights.length === 0">
+        <p>Không có chuyến bay nào được tìm thấy</p>
+      </div>
+
+      <!-- View all flights button -->
+      <div class="view-all-container">
+        <a routerLink="/flights" class="btn-view-all">Xem tất cả chuyến bay</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section class="services">
+    <div class="container">
+      <h2 class="section-title">{{ 'DỊCH_VỤ_CỦA_CHÚNG_TÔI' | transloco }}</h2>
+
+      <div class="services-grid">
+        <a href="#" class="service-item">
+          <div class="service-icon">
+            <img src="https://cdn-icons-png.flaticon.com/512/1256/1256650.png" alt="Hành lý">
+          </div>
+          <div class="service-name">{{ 'HÀNH_LÝ' | transloco }}<br/>{{ 'TRẢ_TRƯỚC' | transloco }}</div>
+        </a>
+
+        <a href="#" class="service-item">
+          <div class="service-icon">
+            <img src="https://cdn-icons-png.flaticon.com/512/2934/2934269.png" alt="Nâng hạng">
+          </div>
+          <div class="service-name">{{ 'NÂNG_HẠNG' | transloco }}<br/>{{ 'CHỌN_CHỖ' | transloco }}</div>
+        </a>
+
+        <a href="#" class="service-item">
+          <div class="service-icon">
+            <img src="https://cdn-icons-png.flaticon.com/512/3500/3500865.png" alt="Mua sắm">
+          </div>
+          <div class="service-name">{{ 'MUA_SẮM' | transloco }}</div>
+        </a>
+
+        <a href="#" class="service-item">
+          <div class="service-icon">
+            <img src="https://cdn-icons-png.flaticon.com/512/2163/2163350.png" alt="Khách sạn">
+          </div>
+          <div class="service-name">{{ 'KHÁCH_SẠN' | transloco }}<br/>{{ 'TOUR' | transloco }}</div>
+        </a>
+
+        <a href="#" class="service-item">
+          <div class="service-icon">
+            <img src="https://cdn-icons-png.flaticon.com/512/1176/1176393.png" alt="Bảo hiểm">
+          </div>
+          <div class="service-name">{{ 'BẢO_HIỂM' | transloco }}</div>
+        </a>
+
+        <a href="#" class="service-item">
+          <div class="service-icon">
+            <img src="https://cdn-icons-png.flaticon.com/512/994/994928.png" alt="Dịch vụ khác">
+          </div>
+          <div class="service-name">{{ 'DỊCH_VỤ_KHÁC' | transloco }}</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-column">
+          <h3 class="footer-title">{{ 'VỀ_SKYJOURNEY' | transloco }}</h3>
+          <ul class="footer-links">
+            <li><a href="#">{{ 'GIỚI_THIỆU' | transloco }}</a></li>
+            <li><a href="#">{{ 'ĐỘI_BAY' | transloco }}</a></li>
+            <li><a href="#">{{ 'TIN_TỨC_SỰ_KIỆN' | transloco }}</a></li>
+            <li><a href="#">{{ 'CƠ_HỘI_NGHỀ_NGHIỆP' | transloco }}</a></li>
+            <li><a href="#">{{ 'LIÊN_HỆ' | transloco }}</a></li>          </ul>
+        </div>
+
+        <div class="footer-column">
+          <h3 class="footer-title">{{ 'SẢN_PHẨM_DỊCH_VỤ' | transloco }}</h3>
+          <ul class="footer-links">
+            <li><a href="#">{{ 'ĐẶT_VÉ' | transloco }}</a></li>
+            <li><a href="#">{{ 'DỊCH_VỤ_TRÊN_KHÔNG' | transloco }}</a></li>
+            <li><a href="#">{{ 'DỊCH_VỤ_MẶT_ĐẤT' | transloco }}</a></li>
+            <li><a href="#">{{ 'SKYJOURNEY_LOUNGE' | transloco }}</a></li>
+            <li><a href="#">{{ 'CÁC_CHƯƠNG_TRÌNH_KHUYẾN_MÃI' | transloco }}</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-column">
+          <h3 class="footer-title">{{ 'TRỢ_GIÚP' | transloco }}</h3>
+          <ul class="footer-links">
+            <li><a href="#">{{ 'CÂU_HỎI_THƯỜNG_GẶP' | transloco }}</a></li>
+            <li><a href="#">{{ 'CHÍNH_SÁCH_VÉ' | transloco }}</a></li>
+            <li><a href="#">{{ 'CHÍNH_SÁCH_HÀNH_LÝ' | transloco }}</a></li>
+            <li><a href="#">{{ 'QUYỀN_LỢI_HÀNH_KHÁCH' | transloco }}</a></li>
+            <li><a href="#">{{ 'QUY_ĐỊNH_VẬN_CHUYỂN' | transloco }}</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-column">
+          <h3 class="footer-title">{{ 'Đăng_ký_nhận_tin' | transloco }}</h3>
+          <p>{{ 'ĐĂNG_KÝ_ĐỂ_NHẬN_THÔNG_TIN_VỀ_CÁC_CHƯƠNG_TRÌNH_KHUYẾN_MÃI_MỚI_NHẤT' | transloco }}</p>
+
+          <div class="subscribe-form">
+            <input type="email" placeholder="Email của bạn" class="footer-input">
+            <button class="btn-subscribe">{{ 'ĐĂNG_KÝ' | transloco }}</button>
+          </div>
+
+          <h3 class="footer-title" style="margin-top: 30px;">{{ 'Theo_dõi_chúng_tôi' | transloco }}</h3>
+          <div class="social-icons">
+            <a href="#" class="social-icon">
+              <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook">
+            </a>
+            <a href="#" class="social-icon">
+              <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram">
+            </a>
+            <a href="#" class="social-icon">
+              <img src="https://cdn-icons-png.flaticon.com/512/733/733579.png" alt="Twitter">
+            </a>
+            <a href="#" class="social-icon">
+              <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="Youtube">
+            </a>
+          </div>
+
+          <h3 class="footer-title" style="margin-top: 30px;">{{ 'Tải_ứng_dụng' | transloco }}</h3>
+          <div class="app-buttons">
+            <a href="#" class="app-button">
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Google_Play_Store_badge_EN.svg/2560px-Google_Play_Store_badge_EN.svg.png"
+                alt="Google Play">
+            </a>
+            <a href="#" class="app-button">
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Download_on_the_App_Store_Badge.svg/2560px-Download_on_the_App_Store_Badge.svg.png"
+                alt="App Store">
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2025 SkyJourney Airlines. Tất cả các quyền được bảo lưu.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Chat Widget -->
+  <div class="chat-widget">
+    <img src="https://cdn-icons-png.flaticon.com/512/724/724715.png" alt="Chat">
+    {{ 'CHAT_VỚI_NEO' | transloco }}
+  </div>
+
+</body>
+<script>
+  function stringToSlug(str) {
+    // remove accents
+    var from = "àáãảạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệđùúủũụưừứửữựòóỏõọôồốổỗộơờớởỡợìíỉĩịäëïîöüûñçýỳỹỵỷ",
+        to   = "aaaaaaaaaaaaaaaaaeeeeeeeeeeeduuuuuuuuuuuoooooooooooooooooiiiiiaeiiouuncyyyyy";
+    for (var i=0, l=from.length ; i < l ; i++) {
+      str = str.replace(RegExp(from[i], "gi"), to[i]);
+    }
+
+    str = str.toLowerCase()
+          .trim()
+          .replace(/[^a-z0-9\-]/g, '-')
+          .replace(/-+/g, '-');
+
+    return str;
+  }
+
+  </script>
+</html>

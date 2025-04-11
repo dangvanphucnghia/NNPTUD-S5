@@ -1,0 +1,168 @@
+<div class="tickets-container">
+  <div class="container">
+    <div class="page-header">
+      <h1>Vé của tôi</h1>
+      <a routerLink="/flights" class="btn-primary">
+        <i class="fa-solid fa-search"></i> Tìm chuyến bay
+      </a>
+    </div>
+
+    <div *ngIf="isLoading" class="loading-wrapper">
+      <div class="spinner-container">
+        <div class="spinner"></div>
+      </div>
+      <p>Đang tải danh sách vé...</p>
+    </div>
+
+    <!-- Hiển thị lỗi nếu có -->
+    <div *ngIf="!isLoading && error" class="error-state">
+      <div class="error-message">
+        <i class="fa-solid fa-exclamation-circle"></i>
+        <h3>{{ error }}</h3>
+        <p>Vui lòng thử lại sau</p>
+        <button (click)="loadTickets()" class="btn-retry">
+          <i class="fa-solid fa-sync"></i> Thử lại
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="!isLoading && !error && tickets.length === 0" class="empty-state">
+      <div class="empty-tickets">
+        <div class="ticket-icon">
+          <i class="fa-solid fa-ticket-alt"></i>
+        </div>
+        <h2>Bạn chưa có vé nào</h2>
+        <p>Hãy đặt vé ngay để trải nghiệm dịch vụ bay tốt nhất từ SkyJourney</p>
+        <a routerLink="/flights" class="btn-book-now">
+          <i class="fa-solid fa-plane-departure"></i> Tìm chuyến bay ngay
+        </a>
+      </div>
+    </div>
+
+    <div *ngIf="!isLoading && !error && tickets.length > 0" class="tickets-list">
+      <div class="ticket-card" *ngFor="let ticket of tickets" [ngClass]="getStatusClass(ticket?.flightId?.status || 'pending')">
+        <div class="ticket-header">
+          <div class="ticket-status-badge">{{ getStatusText(ticket?.flightId?.status || 'pending') }}</div>
+          <div class="ticket-date">
+            <i class="fa-regular fa-calendar"></i> {{ ticket?.flightId?.departure?.time ? formatDate(ticket.flightId.departure.time) : 'N/A' }}
+          </div>
+        </div>
+
+        <div class="ticket-body">
+          <div class="airline-info">
+            <div class="airline-logo">
+              <img *ngIf="ticket?.flightId?.airline?.logo" [src]="ticket.flightId.airline.logo" [alt]="ticket.flightId.airline.name">
+              <span *ngIf="!ticket?.flightId?.airline?.logo" class="airline-placeholder">
+                <i class="fa-solid fa-plane"></i>
+              </span>
+            </div>
+            <div class="airline-details">
+              <span class="airline-name">{{ ticket?.flightId?.airline?.name || 'Vietnam Airlines' }}</span>
+              <span class="flight-number">{{ ticket?.flightId?.flightNumber || 'N/A' }}</span>
+            </div>
+          </div>
+
+          <div class="flight-route">
+            <div class="departure">
+              <div class="time">{{ ticket?.flightId?.departure?.time ? formatTime(ticket.flightId.departure.time) : 'N/A' }}</div>
+              <div class="city">{{ ticket?.flightId?.departure?.city || 'N/A' }}</div>
+              <div class="airport-code">{{ ticket?.flightId?.departure?.airport ? ticket.flightId.departure.airport.substr(0,3).toUpperCase() : 'N/A' }}</div>
+            </div>
+            
+            <div class="flight-path">
+              <div class="dots"></div>
+              <div class="plane-icon">
+                <i class="fa-solid fa-plane"></i>
+              </div>
+              <div class="dots"></div>
+            </div>
+            
+            <div class="arrival">
+              <div class="time">{{ ticket?.flightId?.arrival?.time ? formatTime(ticket.flightId.arrival.time) : 'N/A' }}</div>
+              <div class="city">{{ ticket?.flightId?.arrival?.city || 'N/A' }}</div>
+              <div class="airport-code">{{ ticket?.flightId?.arrival?.airport ? ticket.flightId.arrival.airport.substr(0,3).toUpperCase() : 'N/A' }}</div>
+            </div>
+          </div>
+
+          <div class="passenger-info">
+            <div class="info-group">
+              <div class="info-item">
+                <div class="info-label">
+                  <i class="fa-solid fa-user"></i> Hành khách
+                </div>
+                <div class="info-value">{{ ticket?.fullName || 'N/A' }}</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">
+                  <i class="fa-solid fa-chair"></i> Ghế
+                </div>
+                <div class="info-value seat">{{ ticket?.seatNumber || 'N/A' }}</div>
+              </div>
+            </div>
+            <div class="info-group">
+              <div class="info-item">
+                <div class="info-label">
+                  <i class="fa-solid fa-clock"></i> Đặt lúc
+                </div>
+                <div class="info-value">
+                  {{ ticket?.bookingTime ? formatDate(ticket.bookingTime) : 'N/A' }} 
+                  {{ ticket?.bookingTime ? formatTime(ticket.bookingTime) : '' }}
+                </div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">
+                  <i class="fa-solid fa-tag"></i> Giá vé
+                </div>
+                <div class="info-value price">{{ formatPrice(ticket?.price || (ticket?.flightId?.price || 0)) }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ticket-actions">
+          <button class="btn-ticket-action download">
+            <i class="fa-solid fa-download"></i> 
+            <span>Tải vé</span>
+          </button>
+          <div class="divider"></div>
+          <button class="btn-ticket-action checkin">
+            <i class="fa-solid fa-check-circle"></i> 
+            <span>Check-in</span>
+          </button>
+          <div class="divider"></div>
+          <button class="btn-ticket-action view">
+            <i class="fa-solid fa-eye"></i> 
+            <span>Chi tiết</span>
+          </button>
+        </div>
+
+        <div class="ticket-barcode">
+          <i class="fa-solid fa-barcode"></i>
+          <span class="ticket-number">{{ ticket?._id || 'N/A' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!isLoading && !error && tickets.length > 0" class="tickets-summary">
+      <div class="summary-card">
+        <div class="summary-header">
+          <h3>Thông tin chuyến bay</h3>
+        </div>
+        <div class="summary-body">
+          <div class="summary-item">
+            <div class="summary-label">Tổng số vé</div>
+            <div class="summary-value">{{ tickets.length }}</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-label">Sắp khởi hành</div>
+            <div class="summary-value">{{ getUpcomingFlights() }}</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-label">Đã hoàn thành</div>
+            <div class="summary-value">{{ getCompletedFlights() }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

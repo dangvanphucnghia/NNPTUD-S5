@@ -1,0 +1,144 @@
+<div class="dashboard-container">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+      <h1>Quản lý Vé</h1>
+      <p class="text-muted">Quản lý thông tin vé máy bay của tất cả người dùng trong hệ thống</p>
+    </div>
+  
+    <!-- Alert Messages -->
+    <div *ngIf="errorMessage" class="alert alert-error">
+      <i class="fa-solid fa-circle-exclamation mr-2"></i>
+      {{ errorMessage }}
+    </div>
+    <div *ngIf="successMessage" class="alert alert-success">
+      <i class="fa-solid fa-circle-check mr-2"></i>
+      {{ successMessage }}
+    </div>
+  
+    <!-- Card Container -->
+    <div class="card ticket-management-card">
+      <div class="card-header">
+        <div class="header-actions">
+          <!-- Search Box -->
+          <div class="search-box">
+            <input 
+              type="text" 
+              [(ngModel)]="searchTerm"
+              placeholder="Tìm kiếm theo tên, số hiệu, ghế..."
+              class="form-control"
+              autocomplete="off"
+              spellcheck="false"
+            >
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+          </div>
+  
+          <div class="button-group">
+            <!-- Status Filter -->
+            <select [(ngModel)]="statusFilter" class="form-control status-filter">
+              <option value="all">Tất cả trạng thái</option>
+              <option value="pending">Đang chờ xác nhận</option>
+              <option value="confirmed">Đã xác nhận</option>
+              <option value="cancelled">Đã hủy</option>
+              <option value="completed">Đã hoàn thành</option>
+            </select>
+  
+            <!-- Refresh Button -->
+            <button 
+              (click)="loadTickets()"
+              class="btn btn-secondary"
+            >
+              <i class="fa-solid fa-arrows-rotate mr-2"></i>
+              Làm mới
+            </button>
+          </div>
+        </div>
+      </div>
+  
+      <div class="card-body">
+        <!-- Tickets Table -->
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Số hiệu</th>
+                <th>Thông tin chuyến bay</th>
+                <th>Người đặt</th>
+                <th>Thông tin vé</th>
+                <th>Thời gian đặt</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let ticket of filteredTickets">
+                <td>
+                  <div class="font-medium">{{ ticket.flightId?.flightNumber }}</div>
+                  <div class="text-muted">Ghế {{ ticket.seatNumber }}</div>
+                </td>
+                <td>
+                  <div class="font-medium">
+                    {{ ticket.flightId?.departure?.city }} → {{ ticket.flightId?.arrival?.city }}
+                  </div>
+                  <div class="text-muted">{{ ticket.flightId?.airline?.name }}</div>
+                  <div class="text-muted">
+                    {{ ticket.flightId?.departure?.time | date:'dd/MM/yyyy HH:mm' }}
+                  </div>
+                </td>
+                <td>
+                  <div class="font-medium">{{ ticket.userId?.username }}</div>
+                  <div class="text-muted">{{ ticket.userId?.email }}</div>
+                </td>
+                <td>
+                  <div class="font-medium">{{ ticket.fullName }}</div>
+                  <div class="text-muted">{{ ticket.email }}</div>
+                  <div class="text-muted">{{ ticket.phone }}</div>
+                </td>
+                <td>{{ formatDate(ticket.createdAt) }}</td>
+                <td>
+                  <span [class]="'badge ' + getStatusClass(ticket.status)">
+                    {{ ticket.status === 'pending' ? 'Đang chờ' : 
+                       ticket.status === 'confirmed' ? 'Đã xác nhận' : 
+                       ticket.status === 'cancelled' ? 'Đã hủy' : 
+                       ticket.status === 'completed' ? 'Đã hoàn thành' : ticket.status }}
+                  </span>
+                </td>
+                <td>
+                  <div class="action-buttons">
+                    <button 
+                      *ngIf="ticket.status === 'pending'"
+                      (click)="confirmTicket(ticket._id)" 
+                      class="btn btn-icon btn-success"
+                      title="Xác nhận vé"
+                    >
+                      <i class="fa-solid fa-check"></i>
+                    </button>
+                    <button 
+                      *ngIf="ticket.status !== 'cancelled' && ticket.status !== 'completed'"
+                      (click)="cancelTicket(ticket._id)" 
+                      class="btn btn-icon btn-danger"
+                      title="Hủy vé"
+                    >
+                      <i class="fa-solid fa-ban"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="filteredTickets.length === 0">
+                <td colspan="7" class="empty-state">
+                  <div class="empty-message">
+                    <i class="fa-solid fa-ticket-simple"></i>
+                    <p>Không tìm thấy vé nào</p>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Loading Overlay -->
+    <div *ngIf="isLoading" class="loading-overlay">
+      <div class="spinner"></div>
+    </div>
+  </div>

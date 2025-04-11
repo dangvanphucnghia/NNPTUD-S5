@@ -1,0 +1,373 @@
+<div class="dashboard-container">
+  <!-- Dashboard Header -->
+  <div class="dashboard-header">
+    <h1>Quản lý Khuyến Mãi</h1>
+    <p class="text-muted">Quản lý các mã khuyến mãi trong hệ thống</p>
+  </div>
+
+  <!-- Alert Messages -->
+  <div *ngIf="errorMessage" class="alert alert-error">
+    <i class="fa-solid fa-circle-exclamation mr-2"></i>
+    {{ errorMessage }}
+  </div>
+  <div *ngIf="successMessage" class="alert alert-success">
+    <i class="fa-solid fa-circle-check mr-2"></i>
+    {{ successMessage }}
+  </div>
+
+  <!-- Card Container -->
+  <div class="card promotion-management-card">
+    <div class="card-header">
+      <div class="header-actions">
+        <!-- Search Box -->
+        <div class="search-box">
+          <input 
+            type="text" 
+            [(ngModel)]="searchTerm"
+            placeholder="Tìm kiếm theo mã hoặc tên khuyến mãi..."
+            class="form-control"
+            autocomplete="off"
+            spellcheck="false"
+          >
+          <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        </div>
+
+        <div class="button-group">
+          <!-- Toggle Deleted -->
+          <button 
+            (click)="toggleDeletedPromotions()"
+            class="btn btn-secondary"
+            [class.active]="showDeleted"
+          >
+            <i class="fa-solid" [class.fa-eye]="!showDeleted" [class.fa-eye-slash]="showDeleted"></i>
+            {{ showDeleted ? 'Ẩn khuyến mãi đã xóa' : 'Hiện khuyến mãi đã xóa' }}
+          </button>
+
+          <!-- Add Button -->
+          <button 
+            (click)="createPromotion()"
+            class="btn btn-primary"
+          >
+            <i class="fa-solid fa-plus mr-2"></i>
+            Thêm Khuyến Mãi
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <!-- Tabs -->
+      <div class="tabs">
+        <button 
+          class="tab-button" 
+          [class.active]="activeTab === 'list'"
+          (click)="activeTab = 'list'"
+        >
+          Danh sách khuyến mãi
+        </button>
+        <button 
+          class="tab-button" 
+          [class.active]="activeTab === 'flights'"
+          (click)="activeTab = 'flights'"
+        >
+          Chuyến bay áp dụng
+        </button>
+      </div>
+
+      <!-- Promotions Table -->
+      <div class="table-container" *ngIf="activeTab === 'list'">
+        <table>
+          <thead>
+            <tr>
+              <th>Mã</th>
+              <th>Tên</th>
+              <th>Mô tả</th>
+              <th>Giảm giá</th>
+              <th>Thời gian</th>
+              <th>Giới hạn</th>
+              <th>Trạng thái</th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let promotion of filteredPromotions" [class.deleted-promotion]="!promotion.isActive">
+              <td>
+                {{ promotion.code }}
+                <span *ngIf="!promotion.isActive" class="deleted-badge">Đã xóa</span>
+              </td>
+              <td>{{ promotion.name }}</td>
+              <td>{{ promotion.description }}</td>
+              <td>{{ getDiscountDisplay(promotion) }}</td>
+              <td>
+                <div>{{ promotion.startDate | date:'dd/MM/yyyy' }}</div>
+                <div class="text-muted">
+                  {{ promotion.endDate | date:'dd/MM/yyyy' }}
+                </div>
+              </td>
+              <td>
+                <div *ngIf="promotion.usageLimit">
+                  {{ promotion.usedCount || 0 }}/{{ promotion.usageLimit }}
+                </div>
+                <div *ngIf="!promotion.usageLimit" class="text-muted">
+                  Không giới hạn
+                </div>
+              </td>
+              <td>
+                <span [class]="'badge ' + (promotion.isActive ? 'badge-active' : 'badge-inactive')">
+                  {{ promotion.isActive ? 'Đang hoạt động' : 'Đã tắt' }}
+                </span>
+              </td>
+              <td>
+                <div class="action-buttons">
+                  <button 
+                    *ngIf="!promotion.isActive"
+                    (click)="restorePromotion(promotion._id)" 
+                    class="btn btn-icon btn-success"
+                    title="Khôi phục"
+                  >
+                    <i class="fa-solid fa-trash-arrow-up"></i>
+                  </button>
+                  <button 
+                    *ngIf="promotion.isActive"
+                    (click)="editPromotion(promotion)" 
+                    class="btn btn-icon btn-primary"
+                    title="Chỉnh sửa"
+                  >
+                    <i class="fa-solid fa-pen-to-square"></i>
+                  </button>
+                  <button 
+                    *ngIf="promotion.isActive"
+                    (click)="deletePromotion(promotion._id)" 
+                    class="btn btn-icon btn-danger"
+                    title="Xóa"
+                  >
+                    <i class="fa-solid fa-trash-can"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="filteredPromotions.length === 0">
+              <td colspan="8" class="empty-state">
+                <div class="empty-message">
+                  <i class="fa-solid fa-tag-slash"></i>
+                  <p>Không tìm thấy khuyến mãi nào</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Applicable Flights Table -->
+      <div class="table-container" *ngIf="activeTab === 'flights'">
+        <table>
+          <thead>
+            <tr>
+              <th>Mã chuyến bay</th>
+              <th>Điểm đi</th>
+              <th>Điểm đến</th>
+              <th>Thời gian</th>
+              <th>Giá vé</th>
+              <th>Khuyến mãi áp dụng</th>
+              <th>Giá sau giảm</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let flight of getAllApplicableFlights()">
+              <td>{{ flight.flightNumber }}</td>
+              <td>
+                {{ flight.departure.city }}
+                <div class="text-muted">{{ flight.departure.airport }}</div>
+              </td>
+              <td>
+                {{ flight.arrival.city }}
+                <div class="text-muted">{{ flight.arrival.airport }}</div>
+              </td>
+              <td>
+                <div>{{ flight.departure.time | date:'dd/MM/yyyy HH:mm' }}</div>
+                <div class="text-muted">{{ flight.arrival.time | date:'dd/MM/yyyy HH:mm' }}</div>
+              </td>
+              <td>{{ flight.price | currency:'VND':'symbol':'1.0-0' }}</td>
+              <td>
+                <div *ngFor="let promotion of getPromotionsForFlight(flight)">
+                  <span class="badge badge-promotion">
+                    {{ promotion.code }} - Giảm {{ promotion.discountValue }}{{ promotion.discountType === 'PERCENTAGE' ? '%' : ' VND' }}
+                  </span>
+                </div>
+              </td>
+              <td>
+                {{ getDiscountedPrice(flight) | currency:'VND':'symbol':'1.0-0' }}
+              </td>
+            </tr>
+            <tr *ngIf="getAllApplicableFlights().length === 0">
+              <td colspan="7" class="empty-state">
+                <div class="empty-message">
+                  <i class="fa-solid fa-plane-slash"></i>
+                  <p>Không có chuyến bay nào áp dụng khuyến mãi</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div *ngIf="isLoading" class="loading-overlay">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Create/Edit Modal -->
+  <div *ngIf="isEditing" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>{{ selectedPromotion?._id ? 'Chỉnh sửa thông tin khuyến mãi' : 'Thêm khuyến mãi mới' }}</h3>
+        <button type="button" (click)="cancelEdit()" class="btn-close">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <form [formGroup]="promotionForm" (ngSubmit)="savePromotion()">
+        <div class="modal-body">
+          <!-- Code -->
+          <div class="form-group">
+            <label>Mã khuyến mãi</label>
+            <input 
+              type="text" 
+              formControlName="code"
+              [class.is-invalid]="promotionForm.get('code')?.invalid && promotionForm.get('code')?.touched"
+            >
+            <div *ngIf="promotionForm.get('code')?.invalid && promotionForm.get('code')?.touched" 
+                class="invalid-feedback">
+              Mã khuyến mãi phải có ít nhất 3 ký tự
+            </div>
+          </div>
+
+          <!-- Name -->
+          <div class="form-group">
+            <label>Tên khuyến mãi</label>
+            <input 
+              type="text" 
+              formControlName="name"
+              [class.is-invalid]="promotionForm.get('name')?.invalid && promotionForm.get('name')?.touched"
+            >
+            <div *ngIf="promotionForm.get('name')?.invalid && promotionForm.get('name')?.touched" 
+                class="invalid-feedback">
+              Vui lòng nhập tên khuyến mãi
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div class="form-group">
+            <label>Mô tả</label>
+            <textarea 
+              formControlName="description"
+              [class.is-invalid]="promotionForm.get('description')?.invalid && promotionForm.get('description')?.touched"
+            ></textarea>
+            <div *ngIf="promotionForm.get('description')?.invalid && promotionForm.get('description')?.touched" 
+                class="invalid-feedback">
+              Vui lòng nhập mô tả khuyến mãi
+            </div>
+          </div>
+
+          <!-- Discount Type & Value -->
+          <div class="form-row">
+            <div class="form-group">
+              <label>Loại giảm giá</label>
+              <select formControlName="discountType">
+                <option value="PERCENTAGE">Phần trăm (%)</option>
+                <option value="FIXED_AMOUNT">Số tiền cố định</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Giá trị giảm</label>
+              <input 
+                type="number" 
+                formControlName="discountValue"
+                [class.is-invalid]="promotionForm.get('discountValue')?.invalid && promotionForm.get('discountValue')?.touched"
+              >
+              <div *ngIf="promotionForm.get('discountValue')?.invalid && promotionForm.get('discountValue')?.touched" 
+                  class="invalid-feedback">
+                Giá trị giảm phải lớn hơn 0
+              </div>
+            </div>
+          </div>
+
+          <!-- Date Range -->
+          <div class="form-row">
+            <div class="form-group">
+              <label>Ngày bắt đầu</label>
+              <input 
+                type="datetime-local" 
+                formControlName="startDate"
+                [class.is-invalid]="promotionForm.get('startDate')?.invalid && promotionForm.get('startDate')?.touched"
+              >
+            </div>
+
+            <div class="form-group">
+              <label>Ngày kết thúc</label>
+              <input 
+                type="datetime-local" 
+                formControlName="endDate"
+                [class.is-invalid]="promotionForm.get('endDate')?.invalid && promotionForm.get('endDate')?.touched"
+              >
+            </div>
+          </div>
+
+          <!-- Usage Limit -->
+          <div class="form-group">
+            <label>Giới hạn sử dụng</label>
+            <input 
+              type="number" 
+              formControlName="usageLimit"
+              placeholder="Để trống nếu không giới hạn"
+            >
+          </div>
+
+          <!-- Applicable Airlines -->
+          <div class="form-group">
+            <label>Hãng bay áp dụng</label>
+            <select multiple formControlName="applicableAirlines" class="form-select" (change)="onAirlineSelectionChange()">
+              <option *ngFor="let airline of airlines" [value]="airline._id">
+                {{ airline.name }} ({{ airline.code }})
+              </option>
+            </select>
+            <small class="form-text text-muted">Giữ Ctrl để chọn nhiều hãng bay</small>
+          </div>
+
+          <!-- Applicable Flights -->
+          <div class="form-group">
+            <label>Chuyến bay áp dụng</label>
+            <select multiple formControlName="applicableFlights" class="form-select">
+              <option *ngFor="let flight of getFilteredFlights()" [value]="flight._id">
+                {{ flight.flightNumber }} - {{ flight.departure.city }} → {{ flight.arrival.city }}
+                ({{ flight.departure.time | date:'shortTime' }} - {{ flight.arrival.time | date:'shortTime' }})
+              </option>
+            </select>
+            <small class="form-text text-muted">Giữ Ctrl để chọn nhiều chuyến bay</small>
+          </div>
+
+          <!-- Active Status -->
+          <div class="form-group checkbox-group">
+            <label>
+              <input type="checkbox" formControlName="isActive">
+              Kích hoạt khuyến mãi
+            </label>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="cancelEdit()">Hủy</button>
+          <button 
+            type="submit" 
+            class="btn btn-primary"
+            [disabled]="promotionForm.invalid || isLoading"
+          >
+            {{ selectedPromotion?._id ? 'Cập nhật' : 'Thêm mới' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div> 

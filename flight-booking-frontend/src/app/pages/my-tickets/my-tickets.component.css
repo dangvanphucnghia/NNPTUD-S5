@@ -1,0 +1,552 @@
+/* my-tickets.component.css */
+:root {
+    --primary-color: #4F75FF;
+    --primary-dark: #3A5BCC;
+    --secondary-color: #FF9800;
+    --success-color: #4CAF50;
+    --warning-color: #FFC107;
+    --danger-color: #F44336;
+    --light-bg: #f8f9fa;
+    --border-color: #e0e0e0;
+    --text-color: #333;
+    --text-secondary: #757575;
+    --border-radius: 8px;
+    --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+  }
+  
+  /* Container & Layout */
+  .tickets-container {
+    background-color: #f5f5f5;
+    min-height: 100vh;
+    padding: 40px 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  
+  @media (min-width: 992px) {
+    .container {
+      grid-template-columns: 3fr 1fr;
+    }
+    
+    .page-header, .loading-wrapper, .empty-state {
+      grid-column: 1 / -1;
+    }
+  }
+  
+  /* Header Styles */
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .page-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-color);
+    margin: 0;
+  }
+  
+  .btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    transition: var(--transition);
+  }
+  
+  .btn-primary:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+  }
+  
+  /* Loading State */
+  .loading-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 0;
+  }
+  
+  .spinner-container {
+    margin-bottom: 16px;
+  }
+  
+  .spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid rgba(79, 117, 255, 0.2);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  .loading-wrapper p {
+    font-size: 16px;
+    color: var(--text-secondary);
+  }
+  
+  /* Empty State */
+  .empty-state {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 0;
+  }
+  
+  .empty-tickets {
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 40px;
+    text-align: center;
+    max-width: 500px;
+  }
+  
+  .ticket-icon {
+    font-size: 64px;
+    color: var(--primary-color);
+    opacity: 0.2;
+    margin-bottom: 20px;
+  }
+  
+  .empty-tickets h2 {
+    font-size: 24px;
+    margin-bottom: 16px;
+    color: var(--text-color);
+  }
+  
+  .empty-tickets p {
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+  
+  .btn-book-now {
+    background-color: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    padding: 12px 24px;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: var(--transition);
+  }
+  
+  .btn-book-now:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+  }
+  
+  /* Ticket Cards */
+  .tickets-list {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  
+  .ticket-card {
+    background-color: white;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+    position: relative;
+    transition: var(--transition);
+    border-top: 5px solid var(--primary-color);
+  }
+  
+  .ticket-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  }
+  
+  .ticket-card.status-scheduled {
+    border-top-color: var(--primary-color);
+  }
+  
+  .ticket-card.status-delayed {
+    border-top-color: var(--warning-color);
+  }
+  
+  .ticket-card.status-cancelled {
+    border-top-color: var(--danger-color);
+  }
+  
+  .ticket-card.status-completed {
+    border-top-color: var(--success-color);
+  }
+  
+  .ticket-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 16px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .ticket-status-badge {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  
+  .status-scheduled .ticket-status-badge {
+    background-color: var(--primary-color);
+  }
+  
+  .status-delayed .ticket-status-badge {
+    background-color: var(--warning-color);
+  }
+  
+  .status-cancelled .ticket-status-badge {
+    background-color: var(--danger-color);
+  }
+  
+  .status-completed .ticket-status-badge {
+    background-color: var(--success-color);
+  }
+  
+  .ticket-date {
+    font-size: 14px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  /* Ticket Body */
+  .ticket-body {
+    padding: 20px;
+  }
+  
+  .airline-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  
+  .airline-logo {
+    width: 48px;
+    height: 48px;
+    background-color: #f8f9fa;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  
+  .airline-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  
+  .airline-placeholder {
+    color: var(--primary-color);
+    font-size: 20px;
+  }
+  
+  .airline-details {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .airline-name {
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--text-color);
+  }
+  
+  .flight-number {
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+  
+  /* Flight Route */
+  .flight-route {
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+    background-color: #f8f9fa;
+    border-radius: var(--border-radius);
+    padding: 16px;
+  }
+  
+  .departure, .arrival {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .time {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-color);
+  }
+  
+  .city {
+    font-size: 16px;
+    font-weight: 500;
+    margin: 4px 0;
+  }
+  
+  .airport-code {
+    font-size: 12px;
+    color: var(--text-secondary);
+    background-color: #e9ecef;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  
+  .flight-path {
+    flex: 2;
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+  }
+  
+  .dots {
+    flex: 1;
+    height: 2px;
+    background-image: linear-gradient(to right, var(--border-color) 50%, transparent 50%);
+    background-size: 8px 1px;
+    background-repeat: repeat-x;
+  }
+  
+  .plane-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 32px;
+    height: 32px;
+    background-color: white;
+    border: 2px solid var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+  }
+  
+  /* Passenger Info */
+  .passenger-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  
+  .info-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  
+  .info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .info-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  
+  .info-value {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-color);
+  }
+  
+  .info-value.seat {
+    color: var(--primary-color);
+    background-color: rgba(79, 117, 255, 0.1);
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+  
+  .info-value.price {
+    color: var(--primary-color);
+    font-weight: 600;
+  }
+  
+  /* Ticket Actions */
+  .ticket-actions {
+    display: flex;
+    border-top: 1px solid var(--border-color);
+  }
+  
+  .btn-ticket-action {
+    flex: 1;
+    background: none;
+    border: none;
+    padding: 12px 8px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    transition: var(--transition);
+  }
+  
+  .btn-ticket-action:hover {
+    background-color: #f8f9fa;
+  }
+  
+  .btn-ticket-action i {
+    font-size: 18px;
+  }
+  
+  .btn-ticket-action.download {
+    color: var(--primary-color);
+  }
+  
+  .btn-ticket-action.checkin {
+    color: var(--success-color);
+  }
+  
+  .btn-ticket-action.view {
+    color: var(--text-secondary);
+  }
+  
+  .divider {
+    width: 1px;
+    background-color: var(--border-color);
+  }
+  
+  /* Ticket Barcode */
+  .ticket-barcode {
+    padding: 12px;
+    background-color: #f8f9fa;
+    text-align: center;
+    border-top: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  
+  .ticket-number {
+    font-family: monospace;
+    letter-spacing: 2px;
+  }
+  
+  /* Tickets Summary */
+  .tickets-summary {
+    position: sticky;
+    top: 20px;
+  }
+  
+  .summary-card {
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    overflow: hidden;
+  }
+  
+  .summary-header {
+    padding: 16px;
+    background-color: var(--primary-color);
+    color: white;
+  }
+  
+  .summary-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  
+  .summary-body {
+    padding: 16px;
+  }
+  
+  .summary-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  
+  .summary-item:last-child {
+    margin-bottom: 0;
+  }
+  
+  .summary-label {
+    color: var(--text-secondary);
+  }
+  
+  .summary-value {
+    font-weight: 600;
+    color: var(--text-color);
+  }
+  
+  /* Responsive Styles */
+  @media (max-width: 768px) {
+    .tickets-container {
+      padding: 20px 0;
+    }
+    
+    .page-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    
+    .btn-primary {
+      width: 100%;
+      justify-content: center;
+    }
+    
+    .info-group {
+      grid-template-columns: 1fr;
+    }
+    
+    .flight-route {
+      padding: 12px 8px;
+    }
+    
+    .btn-ticket-action span {
+      font-size: 12px;
+    }
+  }

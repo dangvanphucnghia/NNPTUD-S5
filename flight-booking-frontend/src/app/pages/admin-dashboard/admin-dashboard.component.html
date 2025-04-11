@@ -1,0 +1,160 @@
+<div class="dashboard-container">
+  <!-- Dashboard Header -->
+  <div class="dashboard-header">
+    <h1>Chào mừng trở lại, Admin!</h1>
+    <p class="text-muted">Đây là bảng điều khiển của bạn.</p>
+  </div>
+
+  <!-- Stats Overview -->
+  <div class="stats-grid">
+    <!-- Total Users -->
+    <div class="stats-card">
+      <div class="stats-icon primary">
+        <i class="bi bi-people-fill"></i>
+      </div>
+      <div class="stats-content">
+        <h2 class="stats-value">
+          <ng-container *ngIf="isLoadingUsers">
+            <i class="bi bi-arrow-repeat spin"></i> Đang tải...
+          </ng-container>
+          <ng-container *ngIf="!isLoadingUsers">
+            {{ totalUsers }}
+          </ng-container>
+        </h2>
+        <p class="stats-label">Tổng số người dùng</p>
+      </div>
+      <div class="stats-badge up">
+        <i class="bi bi-arrow-up-short"></i> Tổng
+      </div>
+    </div>
+
+    <!-- Flights Today -->
+    <div class="stats-card">
+      <div class="stats-icon success">
+        <i class="bi bi-airplane-fill"></i>
+      </div>
+      <div class="stats-content">
+        <h2 class="stats-value">{{ flightsToday || 0 }}</h2>
+        <p class="stats-label">Chuyến bay hôm nay</p>
+      </div>
+      <div class="stats-badge up">
+        <i class="bi bi-clock"></i> Hôm nay
+      </div>
+    </div>
+
+    <!-- Tickets Sold -->
+    <div class="stats-card">
+      <div class="stats-icon warning">
+        <i class="bi bi-ticket-perforated-fill"></i>
+      </div>
+      <div class="stats-content">
+        <h2 class="stats-value">{{ ticketsSold || 40 }}</h2>
+        <p class="stats-label">Vé đã bán</p>
+      </div>
+      <div class="stats-badge up">
+        <i class="bi bi-graph-up"></i> Tổng
+      </div>
+    </div>
+
+    <!-- Revenue -->
+    <div class="stats-card">
+      <div class="stats-icon danger">
+        <i class="bi bi-currency-dollar"></i>
+      </div>
+      <div class="stats-content">
+        <h2 class="stats-value">{{ formatCurrency(totalRevenue || 44302000) }}</h2>
+        <p class="stats-label">Doanh thu (VNĐ)</p>
+      </div>
+      <div class="stats-badge neutral">
+        <i class="bi bi-arrow-right"></i> 0.0%
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Row -->
+  <div class="charts-row">
+    <!-- Revenue Chart -->
+    <div class="card revenue-chart">
+      <div class="card-header">
+        <h2><i class="bi bi-bar-chart-line"></i> Thống kê doanh thu</h2>
+      </div>
+      <div class="card-body">
+        <!-- Placeholder for actual chart implementation -->
+        <div class="chart-placeholder">
+          <div class="chart-bars">
+            <div class="chart-bar" style="height: 20%"></div>
+            <div class="chart-bar" style="height: 45%"></div>
+            <div class="chart-bar" style="height: 95%"></div>
+            <div class="chart-bar" style="height: 60%"></div>
+            <div class="chart-bar" style="height: 40%"></div>
+            <div class="chart-bar" style="height: 35%"></div>
+            <div class="chart-bar" style="height: 50%"></div>
+          </div>
+          <div class="chart-labels">
+            <span>T2</span>
+            <span>T3</span>
+            <span>T4</span>
+            <span>T5</span>
+            <span>T6</span>
+            <span>T7</span>
+            <span>CN</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ticket Distribution -->
+    <div class="card distribution-chart">
+      <div class="card-header">
+        <h2><i class="bi bi-pie-chart"></i> Phân bố vé theo tuyến</h2>
+      </div>
+      <div class="card-body">
+        <!-- Placeholder for actual chart implementation -->
+        <div class="donut-chart-placeholder">
+          <div class="donut-chart">
+            <div class="donut-hole"></div>
+          </div>
+          <div class="donut-legend">
+            <div class="legend-item">
+              <span class="legend-color" style="background-color: #4f46e5"></span>
+              <span class="legend-label">HN - HCM (60%)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-color" style="background-color: #10b981"></span>
+              <span class="legend-label">HCM - ĐN (25%)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-color" style="background-color: #f59e0b"></span>
+              <span class="legend-label">Khác (15%)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Activities -->
+  <div class="card recent-activities">
+    <div class="card-header">
+      <h2><i class="bi bi-activity"></i> Hoạt động gần đây</h2>
+    </div>
+    <div class="card-body">
+      <div class="activity-list">
+        <div class="activity-item" *ngFor="let activity of recentActivities">
+          <div class="activity-icon" [ngClass]="'bg-' + (activity.type === 'user' ? 'primary' : 
+                                                        activity.type === 'booking' ? 'success' :
+                                                        activity.type === 'update' ? 'warning' : 'danger')">
+            <i class="bi" [ngClass]="activity.type === 'user' ? 'bi-person-plus' : 
+                                     activity.type === 'booking' ? 'bi-ticket-perforated' :
+                                     activity.type === 'update' ? 'bi-pencil-square' : 'bi-trash'"></i>
+          </div>
+          <div class="activity-content">
+            <div class="activity-title">{{ activity.title }}</div>
+            <div class="activity-subtitle">{{ activity.subtitle }}</div>
+            <div class="activity-time">{{ activity.time }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

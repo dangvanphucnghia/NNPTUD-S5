@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng ký - SkyJourney Airlines</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #4F75FF, #002D72);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .register-container {
+      display: flex;
+      max-width: 1000px;
+      width: 100%;
+      background: white;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      animation: fadeIn 1s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .register-image {
+      flex: 1;
+      background: url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80') center/cover no-repeat;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 20px;
+      color: white;
+      text-align: center;
+      position: relative;
+    }
+    .register-image h2 {
+      font-size: 28px;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    .register-image p {
+      font-size: 18px;
+    }
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+    }
+    .register-form {
+      flex: 1;
+      padding: 50px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 26px;
+      font-weight: bold;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+    .form-group input:focus {
+      border-color: #4F75FF;
+      outline: none;
+    }
+    .btn-register {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      background: linear-gradient(135deg, #4F75FF, #002D72);
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 15px;
+    }
+    .btn-register:hover {
+      background: linear-gradient(135deg, #3A5BCC, #001F50);
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+    .login-link {
+      text-align: center;
+      margin-top: 15px;
+    }
+    .login-link a {
+      color: #4F75FF;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="register-container">
+    <div class="register-image">
+      <div class="overlay"></div>
+      <h2>SkyJourney Airlines</h2>
+      <p>Khám phá thế giới với những chuyến bay tuyệt vời!</p>
+      <img src="https://cdn-icons-png.flaticon.com/512/984/984233.png" alt="Airplane Icon" style="width: 150px; height: auto; margin-top: 20px; position: relative;">
+    </div>
+    <div class="register-form">
+      <h1>Đăng ký tài khoản</h1>
+      
+      <!-- Hiển thị lỗi nếu có -->
+      <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+      
+      <form (ngSubmit)="onRegister()">
+        <div class="form-group">
+          <label for="username">Họ và tên</label>
+          <input type="text" id="username" [(ngModel)]="user.username" name="username" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" [(ngModel)]="user.email" name="email" required>
+        </div>
+        <div class="form-group">
+          <label for="phone">Số điện thoại</label>
+          <input type="tel" id="phone" [(ngModel)]="user.phone" name="phone" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Mật khẩu</label>
+          <input type="password" id="password" [(ngModel)]="user.password" name="password" required>
+        </div>
+        <div class="form-group">
+          <label for="confirmPassword">Xác nhận mật khẩu</label>
+          <input type="password" id="confirmPassword" [(ngModel)]="user.confirmPassword" name="confirmPassword" required>
+        </div>
+        <button type="submit" class="btn-register">Đăng ký</button>
+      </form>
+      
+      <div class="login-link">
+        Bạn đã có tài khoản? <a routerLink="/login">Đăng nhập</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

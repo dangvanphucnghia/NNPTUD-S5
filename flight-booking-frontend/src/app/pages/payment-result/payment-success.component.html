@@ -1,0 +1,52 @@
+<div class="payment-result-container success">
+  <div *ngIf="loading" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>Đang tải thông tin thanh toán...</p>
+  </div>
+
+  <div *ngIf="!loading" class="result-content">
+    <div class="status-icon success">
+      <i class="fa-solid fa-check-circle"></i>
+    </div>
+    
+    <h1 class="result-title">Thanh toán thành công!</h1>
+    <p class="result-message">Cảm ơn bạn đã đặt vé máy bay tại SkyJourney. Đơn hàng của bạn đã được xác nhận thành công.</p>
+    
+    <div class="order-details">
+      <div class="detail-item">
+        <div class="detail-label">Mã thanh toán:</div>
+        <div class="detail-value">{{ paymentId }}</div>
+      </div>
+      
+      <div class="detail-item">
+        <div class="detail-label">Tổng thanh toán:</div>
+        <div class="detail-value amount">{{ formatCurrency(amount) }}</div>
+      </div>
+
+      <div *ngIf="tickets && tickets.length > 0" class="tickets-summary">
+        <h3>Thông tin vé ({{ tickets.length }} vé)</h3>
+        <div *ngFor="let ticket of tickets; let i = index" class="ticket-item">
+          <div class="ticket-header">Vé #{{ i+1 }}</div>
+          <div class="ticket-details">
+            <p><strong>Hành khách:</strong> {{ ticket.fullName }}</p>
+            <p><strong>Ghế:</strong> {{ ticket.seatNumber }}</p>
+            <p><strong>Chuyến bay:</strong> {{ ticket.flightId?.flightNumber || 'N/A' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="action-buttons">
+      <button class="btn-primary" (click)="viewTickets()">
+        <i class="fa-solid fa-ticket-alt"></i> Xem vé của tôi
+      </button>
+      <button class="btn-secondary" (click)="goHome()">
+        <i class="fa-solid fa-home"></i> Về trang chủ
+      </button>
+    </div>
+    
+    <div class="auto-redirect">
+      Bạn sẽ được chuyển đến trang Vé của tôi sau <span class="countdown">{{ countdown }}</span> giây
+    </div>
+  </div>
+</div>

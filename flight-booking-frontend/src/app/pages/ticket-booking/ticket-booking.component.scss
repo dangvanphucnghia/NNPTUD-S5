@@ -1,0 +1,89 @@
+.detail-value {
+  .original-price {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 0.9em;
+    margin-bottom: 4px;
+  }
+
+  .current-price {
+    font-weight: 600;
+    color: #333;
+    font-size: 1.1em;
+
+    &.discounted {
+      color: #e53935;
+    }
+  }
+
+  .promotion-badge {
+    display: inline-block;
+    background-color: #ffebee;
+    color: #e53935;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    margin-top: 4px;
+
+    i {
+      margin-right: 4px;
+    }
+  }
+}
+
+.price-breakdown {
+  .price-item {
+    .price-value {
+      .original-price {
+        text-decoration: line-through;
+        color: #999;
+        font-size: 0.9em;
+        margin-bottom: 2px;
+      }
+
+      .current-price {
+        font-weight: 600;
+        color: #333;
+
+        &.discounted {
+          color: #e53935;
+        }
+      }
+    }
+  }
+
+  .promotion-details {
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #fff3e0;
+    border-radius: 4px;
+
+    .promo-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 5px;
+
+      .promo-code {
+        font-weight: 600;
+        color: #f57c00;
+      }
+
+      .promo-value {
+        color: #e65100;
+      }
+    }
+  }
+
+  .total-price {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+
+    .total-value {
+      font-size: 1.2em;
+      font-weight: 700;
+      color: #e53935;
+    }
+  }
+} 

@@ -1,0 +1,94 @@
+<div class="admin-layout">
+  <!-- Sidebar -->
+  <div class="sidebar" [class.collapsed]="isSidebarCollapsed">
+    <div class="brand">
+      <a routerLink="/admin/dashboard" class="brand-link">
+        <i class="bi bi-bar-chart-line me-2"></i>
+        <span>Admin Panel</span>
+      </a>
+      <button class="toggle-btn d-none d-lg-block" (click)="toggleSidebar()">
+        <i class="bi" [ngClass]="isSidebarCollapsed ? 'bi-arrow-right' : 'bi-arrow-left'"></i>
+      </button>
+    </div>
+
+    <div class="sidebar-content">
+      <!-- Main Navigation -->
+      <ul class="nav-items">
+        <li class="nav-item">
+          <a routerLink="/admin/dashboard" routerLinkActive="active">
+            <i class="bi bi-house-door"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/users" routerLinkActive="active">
+            <i class="bi bi-people"></i>
+            <span>Người dùng</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/flights" routerLinkActive="active">
+            <i class="bi bi-airplane"></i>
+            <span>Quản lý chuyến bay</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/airlines" routerLinkActive="active">
+            <i class="bi bi-building"></i>
+            <span>Quản lý Hãng Bay</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/tickets" routerLinkActive="active">
+            <i class="bi bi-ticket-perforated"></i>
+            <span>Quản lý vé</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/promotions" routerLinkActive="active">
+            <i class="bi bi-gift"></i>
+            <span>Quản lý khuyến mãi</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/settings" routerLinkActive="active">
+            <i class="bi bi-gear"></i>
+            <span>Cài đặt</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content" [class.sidebar-collapsed]="isSidebarCollapsed">
+    <!-- Header -->
+    <div class="admin-header">
+      <div class="header-left">
+        <button class="toggle-btn d-lg-none" (click)="toggleSidebar()">
+          <i class="bi" [ngClass]="isSidebarCollapsed ? 'bi-x-lg' : 'bi-list'"></i>
+        </button>
+      </div>
+      <div class="header-right">
+        <div class="admin-user">
+          <div class="user-avatar">
+            <span>{{ username.charAt(0).toUpperCase() }}</span>
+          </div>
+          <div class="user-info">
+            <span class="username">{{ username }}</span>
+            <span class="role">ADMIN</span>
+          </div>
+          <button (click)="logout()" class="btn-logout">
+            <i class="bi bi-box-arrow-right"></i>
+            Đăng xuất
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Content Area -->
+    <div class="content-wrapper">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div> 

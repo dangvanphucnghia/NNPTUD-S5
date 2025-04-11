@@ -1,0 +1,358 @@
+<div class="booking-container">
+  <div class="container">
+    <div class="booking-header">
+      <h1>Đặt vé máy bay</h1>
+      <a routerLink="/flights" class="btn-back">
+        <i class="fa-solid fa-arrow-left"></i> Quay lại tìm kiếm
+      </a>
+    </div>
+
+    <div *ngIf="isLoading" class="loading-overlay">
+      <div class="spinner"></div>
+      <p>Đang tải thông tin chuyến bay...</p>
+    </div>
+
+    <div *ngIf="!isLoading && flight" class="booking-content">
+      <!-- Flight Information Card -->
+      <div class="booking-main">
+        <div class="flight-card">
+          <div class="flight-card-header">
+            <div class="airline-info">
+              <img *ngIf="flight.airline?.logo" [src]="flight.airline.logo" [alt]="flight.airline.name"
+                class="airline-logo">
+              <div class="airline-details">
+                <span class="airline-name">{{ flight.airline?.name || 'Vietnam Airlines' }}</span>
+                <span class="flight-number">{{ flight.flightNumber }}</span>
+              </div>
+            </div>
+            <div class="flight-status">
+              <span class="status-badge">Đã xác nhận</span>
+            </div>
+          </div>
+
+          <div class="flight-route">
+            <div class="route-point departure">
+              <div class="time">{{ flight.departure.time | date:'HH:mm' }}</div>
+              <div class="airport">
+                <div class="airport-code">{{ flight.departure.airport.substr(0, 3).toUpperCase() }}</div>
+                <div class="city">{{ flight.departure.city }}</div>
+              </div>
+              <div class="date">{{ flight.departure.time | date:'EEE, dd/MM/yyyy' }}</div>
+            </div>
+
+            <div class="route-line">
+              <div class="line"></div>
+              <div class="plane-icon">
+                <i class="fa-solid fa-plane"></i>
+              </div>
+              <div class="flight-duration">{{ getFlightDuration(flight) }}</div>
+            </div>
+
+            <div class="route-point arrival">
+              <div class="time">{{ flight.arrival.time | date:'HH:mm' }}</div>
+              <div class="airport">
+                <div class="airport-code">{{ flight.arrival.airport.substr(0, 3).toUpperCase() }}</div>
+                <div class="city">{{ flight.arrival.city }}</div>
+              </div>
+              <div class="date">{{ flight.arrival.time | date:'EEE, dd/MM/yyyy' }}</div>
+            </div>
+          </div>
+
+          <div class="flight-details">
+            <div class="detail-item">
+              <div class="detail-icon"><i class="fa-solid fa-plane"></i></div>
+              <div class="detail-info">
+                <div class="detail-label">Máy bay</div>
+                <div class="detail-value">{{ flight.aircraft }}</div>
+              </div>
+            </div>
+
+            <div class="detail-item">
+              <div class="detail-icon"><i class="fa-solid fa-chair"></i></div>
+              <div class="detail-info">
+                <div class="detail-label">Ghế trống</div>
+                <div class="detail-value">{{ flight.seatsAvailable }}</div>
+              </div>
+            </div>
+
+            <div class="detail-item">
+              <div class="detail-icon"><i class="fa-solid fa-suitcase"></i></div>
+              <div class="detail-info">
+                <div class="detail-label">Hành lý</div>
+                <div class="detail-value">20kg</div>
+              </div>
+            </div>
+
+            <div class="detail-item">
+              <div class="detail-icon"><i class="fa-solid fa-tag"></i></div>
+              <div class="detail-info">
+                <div class="detail-label">Giá vé</div>
+                <div class="detail-value">
+                  <div *ngIf="hasPromotion(flight)" class="original-price">
+                    {{ flight.price | currency:'VND':'symbol':'1.0-0' }}
+                  </div>
+                  <div class="current-price" [ngClass]="{'discounted': hasPromotion(flight)}">
+                    {{ getDiscountedPrice(flight) | currency:'VND':'symbol':'1.0-0' }}
+                  </div>
+                  <div *ngIf="hasPromotion(flight)" class="promotion-badge">
+                    <i class="fa-solid fa-tag"></i> Khuyến mãi
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Passenger Information Form -->
+        <div class="form-section">
+          <h2 class="section-title">Thông tin hành khách</h2>
+
+          <form [formGroup]="bookingForm">
+            <div class="passenger-forms" formArrayName="passengers">
+              <div *ngFor="let passenger of passengers.controls; let i = index" [formGroupName]="i"
+                class="passenger-card">
+                <div class="passenger-header">
+                  <h3>{{ getPassengerTitle(i) }}</h3>
+                  <button type="button" *ngIf="passengers.length > 1" (click)="removePassenger(i)" class="btn-icon"
+                    title="Xóa hành khách">
+                    <i class="fa-solid fa-times"></i>
+                  </button>
+                </div>
+
+                <div class="passenger-body">
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="fullName{{i}}">Họ và tên <span class="required">*</span></label>
+                      <input type="text" id="fullName{{i}}" formControlName="fullName" placeholder="Nhập họ tên đầy đủ"
+                        class="form-control">
+                      <div *ngIf="passenger.get('fullName')?.invalid && passenger.get('fullName')?.touched"
+                        class="error-message">
+                        Vui lòng nhập họ tên
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="email{{i}}">Email <span class="required">*</span></label>
+                      <input type="email" id="email{{i}}" formControlName="email" placeholder="email@example.com"
+                        class="form-control">
+                      <div *ngIf="passenger.get('email')?.invalid && passenger.get('email')?.touched"
+                        class="error-message">
+                        Vui lòng nhập email hợp lệ
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="phone{{i}}">Số điện thoại <span class="required">*</span></label>
+                      <input type="tel" id="phone{{i}}" formControlName="phone" placeholder="0xxxxxxxxx"
+                        class="form-control">
+                      <div *ngIf="passenger.get('phone')?.invalid && passenger.get('phone')?.touched"
+                        class="error-message">
+                        Vui lòng nhập số điện thoại hợp lệ (10 số)
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="seat{{i}}">Chọn ghế <span class="required">*</span></label>
+                      <div class="seat-selection">
+                        <select id="seat{{i}}" formControlName="seatNumber" class="form-control">
+                          <option value="">-- Chọn ghế --</option>
+                          <option *ngFor="let seat of availableSeats" [value]="seat"
+                            [class.seat-taken]="isSeatTaken(seat)">
+                            {{ seat }} {{ isSeatTaken(seat) ? '(Đã chọn)' : '' }}
+                          </option>
+                        </select>
+                        <button type="button" class="seat-map-button" id="openSeatMapBtn{{i}}"
+                          (click)="openSeatMap($event)">
+                          <i class="fa-solid fa-map"></i>
+                        </button>
+                      </div>
+                      <div *ngIf="passenger.get('seatNumber')?.invalid && passenger.get('seatNumber')?.touched"
+                        class="error-message">
+                        Vui lòng chọn ghế
+                      </div>
+                      <div *ngIf="isSeatTaken(passenger.get('seatNumber')?.value)" class="error-message">
+                        Ghế này đã được chọn bởi hành khách khác
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="add-passenger">
+              <button type="button" (click)="addPassenger()" class="btn-add-passenger" id="addPassengerBtn">
+                <i class="fa-solid fa-plus"></i> Thêm hành khách
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Booking Summary -->
+      <div class="booking-sidebar">
+        <div class="booking-summary">
+          <h3 class="summary-title">Tóm tắt đặt vé</h3>
+
+          <div class="flight-summary-card">
+            <div class="route-summary">
+              <div class="route-cities">
+                <span>{{ flight.departure.city }}</span>
+                <i class="fa-solid fa-arrow-right"></i>
+                <span>{{ flight.arrival.city }}</span>
+              </div>
+              <div class="route-date">{{ flight.departure.time | date:'EEEE, dd/MM/yyyy' }}</div>
+            </div>
+
+            <div class="flight-info-summary">
+              <div class="airline-summary">
+                <img *ngIf="flight.airline?.logo" [src]="flight.airline.logo" [alt]="flight.airline.name"
+                  class="airline-logo-small">
+                <span>{{ flight.airline?.name || 'Vietnam Airlines' }} · {{ flight.flightNumber }}</span>
+              </div>
+              <div class="time-summary">
+                {{ flight.departure.time | date:'HH:mm' }} - {{ flight.arrival.time | date:'HH:mm' }}
+              </div>
+            </div>
+          </div>
+
+          <div class="price-breakdown">
+            <h4 class="breakdown-title">Chi tiết giá</h4>
+
+            <div class="price-item">
+              <div class="price-label">
+                <span>Giá vé cơ bản</span>
+                <span class="passenger-count">x {{ passengers.length }}</span>
+              </div>
+              <div class="price-value">
+                <div *ngIf="hasPromotion(flight)" class="original-price">
+                  {{ flight.price * passengers.length | currency:'VND':'symbol':'1.0-0' }}
+                </div>
+                <div class="current-price" [ngClass]="{'discounted': hasPromotion(flight)}">
+                  {{ getDiscountedPrice(flight) * passengers.length | currency:'VND':'symbol':'1.0-0' }}
+                </div>
+              </div>
+            </div>
+
+            <div class="price-item">
+              <div class="price-label">Thuế & phí</div>
+              <div class="price-value">Đã bao gồm</div>
+            </div>
+
+            <div *ngIf="discountAmount > 0" class="price-item discount">
+              <div class="price-label">Giảm giá</div>
+              <div class="price-value">-{{ discountAmount | currency:'VND':'symbol':'1.0-0' }}</div>
+            </div>
+
+            <div *ngIf="hasPromotion(flight)" class="promotion-details">
+              <div *ngFor="let promo of getPromotionsForFlight(flight)" class="promo-item">
+                <span class="promo-code">{{ promo.code }}</span>
+                <span class="promo-value">
+                  {{ promo.discountType === 'PERCENTAGE' ? promo.discountValue + '%' : (promo.discountValue | currency:'VND':'symbol':'1.0-0') }}
+                </span>
+              </div>
+            </div>
+
+            <div class="total-price">
+              <div class="total-label">Tổng cộng</div>
+              <div class="total-value">{{ totalAmount | currency:'VND':'symbol':'1.0-0' }}</div>
+            </div>
+
+            <!-- Thay đổi: Gọi phương thức xacNhanDatVe thay vì submitBooking -->
+            <!-- Thay đổi nút xác nhận đặt vé -->
+            <button type="button" (click)="xacNhanDatVe()" class="btn-book-now" [disabled]="isSubmitting"
+              id="submitButton">
+              <span *ngIf="!isSubmitting">Xác nhận đặt vé</span>
+              <span *ngIf="isSubmitting">
+                <i class="fa-solid fa-spinner fa-spin"></i> Đang xử lý...
+              </span>
+            </button>
+
+            <div class="booking-security">
+              <i class="fa-solid fa-lock"></i> Thanh toán an toàn & bảo mật
+            </div>
+          </div>
+
+          <div class="help-section">
+            <h4>Hỗ trợ đặt vé</h4>
+            <div class="help-item">
+              <i class="fa-solid fa-headset"></i>
+              <span>Hỗ trợ 24/7: 1900 xxxx</span>
+            </div>
+            <div class="help-item">
+              <i class="fa-solid fa-envelope"></i>
+              <span>Email: support&#64;skyjourney.vn</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Seat Map Modal -->
+  <div class="seat-map-modal" id="seatMapModal">
+    <div class="seat-map-content">
+      <div class="seat-map-header">
+        <h3>Sơ đồ ghế</h3>
+        <button type="button" class="close-btn" id="closeSeatMapBtn">
+          <i class="fa-solid fa-times"></i>
+        </button>
+      </div>
+      <div class="seat-map-body">
+        <div class="plane-layout">
+          <div class="cockpit"></div>
+          <div class="exit exit-front"></div>
+
+          <div class="seat-grid">
+            <div class="seat-row seat-row-header">
+              <div class="row-number"></div>
+              <div class="seat-label">A</div>
+              <div class="seat-label">B</div>
+              <div class="seat-label">C</div>
+              <div class="aisle">AISLE</div>
+              <div class="seat-label">D</div>
+              <div class="seat-label">E</div>
+              <div class="seat-label">F</div>
+            </div>
+
+            <div class="seat-row" *ngFor="let row of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]">
+              <div class="row-number">{{ row }}</div>
+              <div class="seat" *ngFor="let letter of ['A', 'B', 'C', 'D', 'E', 'F']"
+                [class.occupied]="!isAvailableSeat(row + letter)" [class.selected]="isSelectedSeat(row + letter)"
+                (click)="selectSeat(row + letter)">
+                {{ letter }}
+              </div>
+              <div class="aisle" *ngIf="row % 3 === 0">
+                <i class="fa-solid fa-arrow-right"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="exit exit-back"></div>
+        </div>
+
+        <div class="seat-legend">
+          <div class="legend-item">
+            <div class="legend-seat available"></div>
+            <span>Ghế trống</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-seat occupied"></div>
+            <span>Ghế đã đặt</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-seat selected"></div>
+            <span>Ghế đã chọn</span>
+          </div>
+        </div>
+      </div>
+      <div class="seat-map-footer">
+        <button type="button" class="btn-select-seat" id="confirmSeatBtn">Xác nhận</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Notification Toast -->
+<div class="toast-container" id="toastContainer"></div>

@@ -1,0 +1,220 @@
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #4F75FF, #4F75FF);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+    
+    .login-container {
+      display: flex;
+      max-width: 900px;
+      width: 100%;
+      background-color: white;
+      border-radius: 15px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+    
+    .login-image {
+      flex: 1;
+      background-color: rgba(128, 128, 128, 0.7);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      padding: 2rem;
+    }
+    
+    .image-overlay {
+      text-align: center;
+      z-index: 2;
+    }
+    
+    .login-image::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.5;
+      z-index: 1;
+    }
+    
+    .login-form {
+      flex: 1;
+      padding: 3rem;
+      display: flex;
+      flex-direction: column;
+      background-color: white;
+    }
+    
+    .login-logo {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .login-logo img {
+      height: 60px;
+    }
+    
+    h1 {
+      font-size: 28px;
+      color: #333;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #555;
+      font-weight: 500;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 15px;
+      transition: all 0.3s;
+    }
+    
+    .form-control:focus {
+      border-color: #6096FD;
+      box-shadow: 0 0 0 2px rgba(96, 150, 253, 0.2);
+      outline: none;
+    }
+    
+    .form-control::placeholder {
+      color: #aaa;
+    }
+    
+    .form-group i {
+      position: absolute;
+      right: 15px;
+      top: 40px;
+      color: #aaa;
+    }
+    
+    /* Thêm hiệu ứng hover cho các nút */
+    .social-btn:hover {
+      background-color: #f5f5f5;
+      transform: translateY(-2px);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .forgot-password {
+      text-align: right;
+      margin-bottom: 1.5rem;
+    }
+    
+    .forgot-password a {
+      color: #4F75FF;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    
+    .forgot-password a:hover {
+      text-decoration: underline;
+    }
+    
+    .btn-login {
+      background: #4F75FF;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      width: 100%;
+      margin-bottom: 1.5rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(96, 150, 253, 0.4);
+    }
+    
+    .social-login {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .social-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .social-btn:hover {
+      background-color: #f5f5f5;
+    }
+    
+    .social-btn img {
+      height: 24px;
+      margin-right: 8px;
+    }
+    
+    .register-link {
+      text-align: center;
+      font-size: 14px;
+      color: #666;
+    }
+    
+    .register-link a {
+      color: #4F75FF;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    
+    .register-link a:hover {
+      text-decoration: underline;
+    }
+    
+    @media (max-width: 768px) {
+      .login-container {
+        flex-direction: column;
+        width: 90%;
+      }
+      
+      .login-image {
+        display: none;
+      }
+      
+      .login-form {
+        padding: 2rem;
+      }
+    }
