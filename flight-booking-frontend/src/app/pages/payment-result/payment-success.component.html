@@ -50,3 +50,299 @@
     </div>
   </div>
 </div>
+
+<style>
+/* Payment Success Screen Styles */
+:root {
+  --primary-color: #4CAF50;
+  --secondary-color: #2196F3;
+  --text-color: #333;
+  --light-text: #666;
+  --background-color: #f9f9f9;
+  --card-background: #fff;
+  --border-radius: 8px;
+  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s ease;
+}
+
+/* Container Styles */
+.payment-result-container {
+  max-width: 700px;
+  margin: 40px auto;
+  background-color: var(--card-background);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 32px;
+  position: relative;
+  overflow: hidden;
+  font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Result Content */
+.result-content {
+  text-align: center;
+}
+
+.status-icon {
+  font-size: 80px;
+  margin-bottom: 24px;
+  display: inline-block;
+  animation: pop 0.6s ease-out;
+}
+
+.status-icon.success {
+  color: var(--primary-color);
+}
+
+@keyframes pop {
+  0% { transform: scale(0); opacity: 0; }
+  70% { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.result-title {
+  color: var(--primary-color);
+  font-size: 28px;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+.result-message {
+  color: var(--light-text);
+  font-size: 16px;
+  line-height: 1.5;
+  margin-bottom: 32px;
+  max-width: 550px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Order Details */
+.order-details {
+  background-color: #f5f9f5;
+  border-radius: var(--border-radius);
+  padding: 24px;
+  margin-bottom: 32px;
+  text-align: left;
+  border: 1px solid rgba(76, 175, 80, 0.2);
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.detail-item:last-of-type {
+  border-bottom: none;
+}
+
+.detail-label {
+  color: var(--light-text);
+  font-size: 14px;
+}
+
+.detail-value {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.detail-value.amount {
+  color: var(--primary-color);
+  font-size: 18px;
+}
+
+/* Tickets Summary */
+.tickets-summary {
+  margin-top: 24px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  padding-top: 24px;
+}
+
+.tickets-summary h3 {
+  font-size: 18px;
+  margin-bottom: 16px;
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+.ticket-item {
+  background-color: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.09);
+  border-radius: var(--border-radius);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.ticket-header {
+  background-color: #f1f8e9;
+  padding: 10px 16px;
+  font-weight: 600;
+  color: var(--primary-color);
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.ticket-header:after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 20px;
+  width: 10px;
+  height: 10px;
+  background-color: white;
+  border-radius: 50%;
+  box-shadow: 15px 0 0 white, 30px 0 0 white, 45px 0 0 white, 
+              60px 0 0 white, 75px 0 0 white, 90px 0 0 white, 
+              105px 0 0 white, 120px 0 0 white, 135px 0 0 white,
+              150px 0 0 white, 165px 0 0 white, 180px 0 0 white,
+              195px 0 0 white, 210px 0 0 white, 225px 0 0 white;
+}
+
+.ticket-details {
+  padding: 16px;
+}
+
+.ticket-details p {
+  margin: 8px 0;
+  font-size: 14px;
+  color: var(--text-color);
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.btn-primary, .btn-secondary {
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 180px;
+  border: none;
+  font-size: 15px;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+}
+
+.btn-primary:hover {
+  background-color: #3d9140;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(76, 175, 80, 0.4);
+}
+
+.btn-secondary {
+  background-color: white;
+  color: var(--secondary-color);
+  border: 1px solid var(--secondary-color);
+}
+
+.btn-secondary:hover {
+  background-color: #f0f7ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(33, 150, 243, 0.2);
+}
+
+.btn-primary:active, .btn-secondary:active {
+  transform: translateY(0);
+}
+
+/* Auto Redirect */
+.auto-redirect {
+  color: var(--light-text);
+  font-size: 14px;
+  margin-top: 16px;
+  animation: fade-in 1s ease;
+}
+
+.countdown {
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Responsive styles */
+@media screen and (max-width: 768px) {
+  .payment-result-container {
+    margin: 20px 16px;
+    padding: 24px 16px;
+  }
+  
+  .status-icon {
+    font-size: 60px;
+    margin-bottom: 16px;
+  }
+  
+  .result-title {
+    font-size: 24px;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .btn-primary, .btn-secondary {
+    width: 100%;
+  }
+}
+
+/* Font Awesome Icons Override */
+.fa-solid.fa-check-circle {
+  color: var(--primary-color);
+}
+
+.fa-solid.fa-ticket-alt, 
+.fa-solid.fa-home {
+  font-size: 16px;
+}
+</style>
