@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 
 interface Ticket {
   _id: string;
-  flightId: {
+  flightId?: {
     _id: string;
     flightNumber: string;
     airline: {
