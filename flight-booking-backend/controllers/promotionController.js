@@ -1,10 +1,34 @@
 const Promotion = require('../models/Promotion');
+const User = require('../models/User');
+const Notification = require('../models/notification');
 
 // Create new promotion
 exports.createPromotion = async (req, res) => {
     try {
         const promotion = new Promotion(req.body);
         await promotion.save();
+
+        // Gửi thông báo
+        let usersToNotify = [];
+
+        if (req.body.userIds && req.body.userIds.length > 0) {
+            // Thông báo đến user cụ thể
+            usersToNotify = req.body.userIds;
+        } else {
+            // Thông báo đến tất cả user
+            const users = await User.find({}, '_id');
+            usersToNotify = users.map(user => user._id);
+        }
+
+        const notifications = usersToNotify.map(userId => ({
+            userId,
+            title: '🎁 Khuyến mãi mới!',
+            message: `Mã khuyến mãi ${promotion.code}: ${promotion.description}`,
+            type: 'promo'
+        }));
+
+        await Notification.insertMany(notifications);
+
         res.status(201).json({
             success: true,
             data: promotion
@@ -180,4 +204,4 @@ exports.validatePromotionCode = async (req, res) => {
             error: error.message
         });
     }
-}; 
+};

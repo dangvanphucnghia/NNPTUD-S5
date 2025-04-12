@@ -10,7 +10,7 @@ import { FlightService } from '../../services/flight.service';
 import { PromotionService, Promotion } from '../../services/promotion.service';
 import { TranslocoService } from '@ngneat/transloco'; // 🆕 Import Transloco
 import { TranslocoModule } from '@ngneat/transloco'; // ✅ Add this
-
+import { NotificationService } from '../../services/notification.service'; 
 interface Flight {
   _id: string;
   airline: any;
@@ -47,6 +47,7 @@ interface Location {
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
+  notifications: any[] = [];
   user: { username: string } | null = null;
   searchForm: FormGroup;
   locations: string[] = [];
@@ -62,7 +63,6 @@ export class HomeComponent implements OnInit {
   currentPage = 1;
   pageSize = 5;
   totalPages = 0;
-
   promotions: Promotion[] = [];
 
   constructor(
@@ -71,7 +71,9 @@ export class HomeComponent implements OnInit {
     private flightService: FlightService,
     private promotionService: PromotionService,
     private router: Router,
+    private notificationService: NotificationService,
     private fb: FormBuilder,
+    
     private translocoService: TranslocoService // 🆕 Inject Transloco
   ) {
     this.searchForm = this.fb.group({
@@ -94,6 +96,14 @@ export class HomeComponent implements OnInit {
     } else {
       this.slugifiedUsername = this.user?.username || null;
     }
+    this.notificationService.getMyNotifications().subscribe({
+      next: (res) => {
+        this.notifications = res.data;
+      },
+      error: (err) => {
+        console.error('Lỗi khi lấy thông báo:', err);
+      }
+    });
 
     const today = new Date();
     const formattedDate = this.formatDate(today);
@@ -102,6 +112,7 @@ export class HomeComponent implements OnInit {
     this.loadFlights();
     this.loadLocations();
     this.loadPromotions();
+    
 
     this.searchForm.get('departure')?.valueChanges.subscribe(value => {
       this.filterDepartureLocations(value);
@@ -110,6 +121,11 @@ export class HomeComponent implements OnInit {
     this.searchForm.get('destination')?.valueChanges.subscribe(value => {
       this.filterDestinationLocations(value);
     });
+    
+  }
+  showNotiPanel: boolean = false;
+  toggleNotificationPanel() {
+    this.showNotiPanel = !this.showNotiPanel;
   }
 
   switchLang(): void {

@@ -12,6 +12,7 @@ const airlineRoutes = require("./routes/airline");
 const ticketRoutes = require('./routes/ticket');
 const paymentRoute = require('./routes/paymentRoute');
 const promotionRoutes = require('./routes/promotionRoutes');
+const notificationRoute = require('./routes/notificationRoute');
 
 const app = express();
 mongoose
@@ -31,6 +32,7 @@ app.use("/v1/airlines", airlineRoutes);
 app.use('/v1/tickets', ticketRoutes); 
 app.use('/api/payment', paymentRoute);
 app.use('/v1/promotions', promotionRoutes);
+app.use('/v1/notifications', notificationRoute);
 
 app.listen(8000, () => {
     console.log("Server is running");

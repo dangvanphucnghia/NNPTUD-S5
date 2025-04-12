@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,8 +16,26 @@
         <a href="/">
           <img src="https://cdn-icons-png.flaticon.com/512/984/984153.png" alt="SkyJourney Airlines Logo" class="logo">
         </a>
+
         <div class="top-links">
-          <a href="#">{{ 'TRỢ_GIÚP' | transloco }}</a>
+          <!-- Thêm trong top-links (thay phần chuông và dropdown) -->
+          <div class="notification-container">
+            <div class="notification-bell" (click)="toggleNotificationPanel()">
+              <i class="fa fa-bell"></i>
+              <span class="badge" *ngIf="notifications && notifications.length > 0">
+                {{ notifications.length }}
+              </span>
+            </div>
+            <div class="notification-dropdown" *ngIf="showNotiPanel">
+              <ul>
+                <li *ngFor="let noti of notifications">
+                  <i class="fa-solid fa-gift" style="color: #ff9800;"></i>
+                  <strong>{{ noti.title }}</strong>: {{ noti.message }}
+                </li>
+              </ul>
+            </div>
+          </div>
+
           <div class="top-links">
             <ng-container *ngIf="!user; else loggedIn">
               <a routerLink="/login" class="btn-login">{{ 'ĐĂNG_NHẬP' | transloco }}</a>
@@ -32,13 +51,8 @@
           </div>
           <div class="language-selector">
             <a href="#" (click)="switchLang()">
-              <img
-                [src]="'assets/img/' + (currentLang === 'en' ? 'en.svg' : 'vn.svg')"
-                alt="Flag"
-                width="20"
-                height="14"
-                style="vertical-align: middle; margin-right: 5px;"
-              />
+              <img [src]="'assets/img/' + (currentLang === 'en' ? 'en.svg' : 'vn.svg')" alt="Flag" width="20"
+                height="14" style="vertical-align: middle; margin-right: 5px;" />
               {{ currentLang === 'en' ? 'English' : 'Tiếng Việt' }}
             </a>
 
@@ -48,6 +62,7 @@
     </div>
   </div>
 
+
   <!-- Main Navigation -->
   <nav class="main-nav">
     <div class="container">
@@ -56,7 +71,7 @@
         <li><a href="#">{{ 'THÔNG_TIN_HÀNH_TRÌNH' | transloco }}</a></li>
         <li><a href="#">{{ 'MUA_VÉ_SẢN_PHẨM_KHÁC' | transloco }}</a></li>
         <li><a href="#">{{ 'LOTUSMILES' | transloco }}</a></li>
-              </ul>
+      </ul>
     </div>
   </nav>
 
@@ -284,14 +299,14 @@
           <div class="service-icon">
             <img src="https://cdn-icons-png.flaticon.com/512/1256/1256650.png" alt="Hành lý">
           </div>
-          <div class="service-name">{{ 'HÀNH_LÝ' | transloco }}<br/>{{ 'TRẢ_TRƯỚC' | transloco }}</div>
+          <div class="service-name">{{ 'HÀNH_LÝ' | transloco }}<br />{{ 'TRẢ_TRƯỚC' | transloco }}</div>
         </a>
 
         <a href="#" class="service-item">
           <div class="service-icon">
             <img src="https://cdn-icons-png.flaticon.com/512/2934/2934269.png" alt="Nâng hạng">
           </div>
-          <div class="service-name">{{ 'NÂNG_HẠNG' | transloco }}<br/>{{ 'CHỌN_CHỖ' | transloco }}</div>
+          <div class="service-name">{{ 'NÂNG_HẠNG' | transloco }}<br />{{ 'CHỌN_CHỖ' | transloco }}</div>
         </a>
 
         <a href="#" class="service-item">
@@ -305,7 +320,7 @@
           <div class="service-icon">
             <img src="https://cdn-icons-png.flaticon.com/512/2163/2163350.png" alt="Khách sạn">
           </div>
-          <div class="service-name">{{ 'KHÁCH_SẠN' | transloco }}<br/>{{ 'TOUR' | transloco }}</div>
+          <div class="service-name">{{ 'KHÁCH_SẠN' | transloco }}<br />{{ 'TOUR' | transloco }}</div>
         </a>
 
         <a href="#" class="service-item">
@@ -336,7 +351,8 @@
             <li><a href="#">{{ 'ĐỘI_BAY' | transloco }}</a></li>
             <li><a href="#">{{ 'TIN_TỨC_SỰ_KIỆN' | transloco }}</a></li>
             <li><a href="#">{{ 'CƠ_HỘI_NGHỀ_NGHIỆP' | transloco }}</a></li>
-            <li><a href="#">{{ 'LIÊN_HỆ' | transloco }}</a></li>          </ul>
+            <li><a href="#">{{ 'LIÊN_HỆ' | transloco }}</a></li>
+          </ul>
         </div>
 
         <div class="footer-column">
@@ -419,18 +435,19 @@
   function stringToSlug(str) {
     // remove accents
     var from = "àáãảạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệđùúủũụưừứửữựòóỏõọôồốổỗộơờớởỡợìíỉĩịäëïîöüûñçýỳỹỵỷ",
-        to   = "aaaaaaaaaaaaaaaaaeeeeeeeeeeeduuuuuuuuuuuoooooooooooooooooiiiiiaeiiouuncyyyyy";
-    for (var i=0, l=from.length ; i < l ; i++) {
+      to = "aaaaaaaaaaaaaaaaaeeeeeeeeeeeduuuuuuuuuuuoooooooooooooooooiiiiiaeiiouuncyyyyy";
+    for (var i = 0, l = from.length; i < l; i++) {
       str = str.replace(RegExp(from[i], "gi"), to[i]);
     }
 
     str = str.toLowerCase()
-          .trim()
-          .replace(/[^a-z0-9\-]/g, '-')
-          .replace(/-+/g, '-');
+      .trim()
+      .replace(/[^a-z0-9\-]/g, '-')
+      .replace(/-+/g, '-');
 
     return str;
   }
 
-  </script>
+</script>
+
 </html>
